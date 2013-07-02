@@ -209,6 +209,17 @@ architecture behave of papilio_pro_top is
   signal ram_wb_we_i:        std_logic;
   signal ram_wb_stall_o:     std_logic;
 
+  signal   m_wb_dat_i:  std_logic_vector(wordSize-1 downto 0);
+  signal   m_wb_dat_o:  std_logic_vector(wordSize-1 downto 0);
+  signal   m_wb_adr_i:  std_logic_vector(maxAddrBitIncIO downto 0);
+  signal   m_wb_sel_i:  std_logic_vector(3 downto 0);
+  signal   m_wb_cti_i:  std_logic_vector(2 downto 0);
+  signal   m_wb_we_i:   std_logic;
+  signal   m_wb_cyc_i:  std_logic;
+  signal   m_wb_stb_i:  std_logic;
+  signal   m_wb_ack_o:  std_logic;
+  signal   m_wb_stall_o:  std_logic;
+
   signal np_ram_wb_ack_o:       std_logic;
   signal np_ram_wb_dat_i:       std_logic_vector(wordSize-1 downto 0);
   signal np_ram_wb_dat_o:       std_logic_vector(wordSize-1 downto 0);
@@ -324,6 +335,8 @@ architecture behave of papilio_pro_top is
   end component;
 
 
+  signal scki_sw, mosi_sw, miso_sw: std_logic;
+
 begin
 
   wb_clk_i <= sysclk;
@@ -394,10 +407,14 @@ begin
   pin41: IOPAD port map(I => gpio_o(41),O => gpio_i(41),T => gpio_t(41),C => sysclk,PAD => WING_C(9) );
   pin42: IOPAD port map(I => gpio_o(42),O => gpio_i(42),T => gpio_t(42),C => sysclk,PAD => WING_C(10) );
   pin43: IOPAD port map(I => gpio_o(43),O => gpio_i(43),T => gpio_t(43),C => sysclk,PAD => WING_C(11) );
-  pin44: IOPAD port map(I => gpio_o(44),O => gpio_i(44),T => gpio_t(44),C => sysclk,PAD => WING_C(12) );
+
+  scki_sw <= WING_C(12); -- No IPAD sync
+
   pin45: IOPAD port map(I => gpio_o(45),O => gpio_i(45),T => gpio_t(45),C => sysclk,PAD => WING_C(13) );
-  pin46: IOPAD port map(I => gpio_o(46),O => gpio_i(46),T => gpio_t(46),C => sysclk,PAD => WING_C(14) );
-  pin47: IOPAD port map(I => gpio_o(47),O => gpio_i(47),T => gpio_t(47),C => sysclk,PAD => WING_C(15) );
+
+  mosi_sw <= WING_C(14); -- No IPAD sync
+
+  pin47: OPAD port map(I => miso_sw, PAD => WING_C(15) );
 
 
   -- Other ports are special, we need to avoid outputs on input-only pins
@@ -691,7 +708,7 @@ begin
   -- IO SLOT 9
   --
 
-  slot9: zpuino_empty_device
+  slot9: daveackley
   port map (
     wb_clk_i      => wb_clk_i,
 	 	wb_rst_i      => wb_rst_i,
@@ -703,7 +720,22 @@ begin
     wb_stb_i      => slot_stb(9),
     wb_ack_o      => slot_ack(9),
     wb_inta_o     => slot_interrupt(9),
-    id            => slot_id(9)
+    id            => slot_id(9),
+
+    mi_wb_dat_i   => m_wb_dat_o,
+    mi_wb_dat_o   => m_wb_dat_i,
+    mi_wb_adr_o   => m_wb_adr_i,
+    mi_wb_sel_o   => m_wb_sel_i,
+    mi_wb_cti_o   => m_wb_cti_i,
+    mi_wb_we_o    => m_wb_we_i,
+    mi_wb_cyc_o   => m_wb_cyc_i,
+    mi_wb_stb_o   => m_wb_stb_i,
+    mi_wb_ack_i   => m_wb_ack_o,
+    mi_wb_stall_i => m_wb_stall_o,
+
+    scki_sw       => scki_sw,
+    mosi_sw       => mosi_sw,
+    miso_sw       => miso_sw
   );
 
 

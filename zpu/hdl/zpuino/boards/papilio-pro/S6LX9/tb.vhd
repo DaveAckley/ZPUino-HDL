@@ -9,6 +9,8 @@ architecture sim of tb is
 
   constant period: time := 31.25 ns;
   signal w_clk: std_logic := '0';
+  signal siclk, sidata: std_logic;
+  signal WING_C: std_logic_vector(15 downto 0);
 
   component papilio_pro_top is
   port (
@@ -177,6 +179,12 @@ architecture sim of tb is
     );
   END component;
 
+  component signalinjector is
+  port (
+    clk:  out std_logic;
+    data: out std_logic
+  );
+  end component signalinjector;
 
 begin
   w_clk <= not w_clk after period/2;
@@ -189,6 +197,7 @@ begin
     SPI_MOSI => spi_mosi,
     SPI_SCK => spi_sck,
     SPI_CS   => spi_cs,
+    WING_C  => WING_C,
 
     DRAM_ADDR   => DRAM_ADDR,
     DRAM_BA     => DRAM_BA,
@@ -250,5 +259,14 @@ begin
     vcc <= 3.3;
     wait;
   end process;
+
+  si: signalinjector
+  port map (
+    clk => siclk,
+    data => sidata
+  );
+
+  WING_C(12) <= siclk;
+  WING_C(14) <= sidata;
 
 end sim;
