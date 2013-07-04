@@ -37,6 +37,7 @@ architecture sim of serializer is
   signal stuff: std_logic;
   signal ferr: std_logic;
   signal has_data: std_logic;
+  signal fid: std_logic;
 
 begin
 
@@ -64,6 +65,8 @@ begin
         data_read<='0';
         shreg(shreg'HIGH downto shreg'HIGH-7) <= "01111111";
         cnt <= 7;
+        bscount <= "000001";
+        fid <= '0';
       else
         data_read <= '0';
 
@@ -77,6 +80,7 @@ begin
                 state <= shift;
                 bscount<= "000001";
                 shreg <= data_in(31 downto 0);
+                fid <= '0';--data_in(32);
                 cnt <= 31;
                 -- Ack read
                 data_read <= '1';
@@ -88,7 +92,7 @@ begin
             else
               cnt <= cnt - 1;
               shreg(shreg'HIGH downto 1)<=shreg(shreg'HIGH-1 downto 0);
-              shreg(0)<='X';--shreg(shreg'HIGH);
+              shreg(0)<='X';
             end if;
 
           when idledata =>
@@ -99,6 +103,7 @@ begin
                 state <= shift;
                 bscount<="000001";
                 shreg <= data_in(31 downto 0);
+                fid <= data_in(32);
                 cnt <= 31;
                 -- Ack read
                 data_read <= '1';
@@ -116,22 +121,30 @@ begin
           when shift =>
               if cnt=0 then
                 if bscount(5)='0' then
-                if data_avail='1' then  -- We have more data, shift it
-                  state <= shift;
-                  bscount<="000001";
-                  shreg <= data_in(31 downto 0);
-                  cnt <= 31;
-                  -- Ack read
-                  data_read <= '1';
-                
-                  --state <= startframe;
-                else
-                  -- No data, we need to transmit an idle tag
-                  shreg<=(others => 'X');
-                  shreg(shreg'HIGH downto shreg'HIGH-7) <= "01111110";
-                  cnt<=7;
-                  state <= idledata;
-                end if;
+                  if fid='1' then
+                    -- Last data for a frame.
+                    state <= startframe;
+                    shreg<=(others => 'X');
+                    shreg(shreg'HIGH downto shreg'HIGH-7) <= "01111111";
+                    cnt <= 7;
+                  else
+                    if data_avail='1' then  -- We have more data, shift it
+                      --state <= shift;
+                      bscount<="000001";
+                      shreg <= data_in(31 downto 0);
+                      cnt <= 31;
+                      -- Ack read
+                      data_read <= '1';
+                    
+                      --state <= startframe;
+                    else
+                      -- No data, we need to transmit an idle tag
+                      shreg<=(others => 'X');
+                      shreg(shreg'HIGH downto shreg'HIGH-7) <= "01111110";
+                      cnt<=7;
+                      state <= idledata;
+                    end if;
+                  end if;
                 end if;
               else
                 if bscount(5)='0' then
@@ -148,7 +161,7 @@ begin
                 bscount <= "000001";
               end if;
 
-              if bscount(5) then
+              if bscount(5)='1' then
                 bscount <= "000001";
               else
                 shreg(shreg'HIGH downto 1)<=shreg(shreg'HIGH-1 downto 0);

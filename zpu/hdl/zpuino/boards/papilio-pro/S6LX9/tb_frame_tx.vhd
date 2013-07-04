@@ -107,7 +107,7 @@ begin
             data_write<='1' & x"7EAAAA00";
             data_write_enable<='1';
           when 1600 =>
-            data_write<='0' & x"FFFFFFFF";
+            data_write<='1' & x"FFFFFFFF";
             data_write_enable<='1';
           when others =>
         end case;
