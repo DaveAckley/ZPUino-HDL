@@ -25,7 +25,7 @@ architecture sim of serializer is
   signal shreg: std_logic_vector(31 downto 0);
   signal txdata: std_logic_vector(31 downto 0);
   signal cnt: integer range 0 to 31;
-  signal bscount: integer range 0 to 5;
+  signal bscount: std_logic_vector(5 downto 0);
 
   type state_type is (
     startframe,
@@ -45,7 +45,7 @@ begin
   process(clk)
   begin
     if falling_edge(clk) then
-      if bscount=5 then
+      if bscount(5)='1' then
         sdata<='0';
       else
         sdata <= shreg(shreg'HIGH);
@@ -75,7 +75,7 @@ begin
 
               if data_avail='1' then  -- We have data, shift it
                 state <= shift;
-                bscount<=0;
+                bscount<= "000001";
                 shreg <= data_in(31 downto 0);
                 cnt <= 31;
                 -- Ack read
@@ -97,7 +97,7 @@ begin
 
               if data_avail='1' then  -- We have data, shift it
                 state <= shift;
-                bscount<=0;
+                bscount<="000001";
                 shreg <= data_in(31 downto 0);
                 cnt <= 31;
                 -- Ack read
@@ -115,10 +115,10 @@ begin
 
           when shift =>
               if cnt=0 then
-                if bscount/=5 then
+                if bscount(5)='0' then
                 if data_avail='1' then  -- We have more data, shift it
                   state <= shift;
-                  bscount<=0;
+                  bscount<="000001";
                   shreg <= data_in(31 downto 0);
                   cnt <= 31;
                   -- Ack read
@@ -134,21 +134,22 @@ begin
                 end if;
                 end if;
               else
-                if bscount/=5 then
+                if bscount(5)='0' then
 
                 cnt <= cnt - 1;
                 end if;
               -- Check for bit stuff.
               if shreg(shreg'HIGH)='1' then
-                if bscount/=5 then
-                  bscount <= bscount + 1;
+                if bscount(5)='0' then
+                  bscount(5 downto 1) <= bscount(4 downto 0);
+                  bscount(0)<='1';
                 end if;
               else
-                bscount <= 0;
+                bscount <= "000001";
               end if;
 
-              if bscount=5 then
-                bscount <= 0;
+              if bscount(5) then
+                bscount <= "000001";
               else
                 shreg(shreg'HIGH downto 1)<=shreg(shreg'HIGH-1 downto 0);
                 shreg(0)<='X';
