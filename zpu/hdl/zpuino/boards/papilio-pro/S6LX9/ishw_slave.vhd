@@ -200,7 +200,7 @@ begin
         writeinprogress<='0';
       else
         mi_wb_cyc_o<='0';
-        mi_wb_stb_o<=DontCareValue;
+        mi_wb_stb_o<='0';
         mi_wb_we_o<=DontCareValue;
 
         case state is
@@ -253,6 +253,8 @@ begin
 
         end case;
 
+        -- Note: once we change the ACK method on SDRAM,
+        -- we should not wait for ACK here.
 
         if rxdatavalid='1' then
           mi_wb_adr_o <= rxaddr;
@@ -263,11 +265,24 @@ begin
           writeinprogress<='1';
         end if;
 
+        if writeinprogress='1' then
+          mi_wb_cyc_o<='1';
+        end if;
+
         if mi_wb_stall_i='0' and writeinprogress='1' then
+          --writeinprogress<='0';
+          rxdatavalid<='0';
+          --mi_wb_cyc_o<='0';
+          mi_wb_stb_o<='0';
+          mi_wb_we_o<=DontCareValue;
+          mi_wb_adr_o <= (others => DontCareValue);
+          mi_wb_dat_o <= (others => DontCareValue);
+        end if;
+
+        if writeinprogress='1' and mi_wb_ack_i='1' then
+          mi_wb_cyc_o<='0';
           writeinprogress<='0';
           rxdatavalid<='0';
-          mi_wb_cyc_o<='0';
-          mi_wb_stb_o<='0';
         end if;
 
       end if;

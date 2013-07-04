@@ -40,6 +40,7 @@ begin
     if rising_edge(clk) then
       valid <= '0';
       framedetected<='0';
+      idledetected<='0';
       if inescape='1' then
         inescape<='0';
         shreg(0)<=data;

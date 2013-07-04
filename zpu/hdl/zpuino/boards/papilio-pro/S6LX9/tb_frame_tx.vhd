@@ -110,6 +110,15 @@ begin
           when 4200 =>
             data_write<='1' & x"7EAAAA00";
             data_write_enable<='1';
+          when 4202 =>
+            data_write<='0' & x"7EAAAA00";
+            data_write_enable<='1';
+          when 4204 =>
+            data_write<='0' & x"7EAAAA00";
+            data_write_enable<='1';
+          when 4208 =>
+            data_write<='0' & x"7EAAAA00";
+            data_write_enable<='1';
           when 5000 =>
             data_write<='1' & x"FFFFFFFF";
             data_write_enable<='1';
