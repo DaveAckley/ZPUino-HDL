@@ -77,11 +77,15 @@ begin
             if cnt=0 then
 
               if data_avail='1' then  -- We have data, shift it
-                state <= shift;
-                bscount<= "000001";
-                shreg <= data_in(31 downto 0);
-                fid <= '0';--data_in(32);
-                cnt <= 31;
+                if data_in(32)='1' then
+                  state <= shift;
+                  bscount<= "000001";
+                  shreg <= data_in(31 downto 0);
+                  fid <= '0';--data_in(32);
+                  cnt <= 31;
+                else
+                  -- signal error here.
+                end if;
                 -- Ack read
                 data_read <= '1';
               else

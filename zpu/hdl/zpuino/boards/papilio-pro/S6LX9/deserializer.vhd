@@ -11,7 +11,8 @@ entity deserializer is
     datavalid: out std_logic;
     dataout: out std_logic_vector(7 downto 0);
     clkout: out std_logic;
-    framedetected: out std_logic
+    framedetected: out std_logic;
+    idledetected: out std_logic
   );
 end entity deserializer;
 
@@ -56,11 +57,12 @@ begin
           -- We see a sync pattern
           cnt <= 7;
           inframe <= '1';
-          report "Start/end FRAME";
+          --report "Start/end FRAME";
           framedetected<='1';
         elsif isidle='1' then
           -- Nothing to do.
-          report "Idle TAG";
+          --report "Idle TAG";
+          idledetected<='1';
           cnt<=7;
          else
            if isescape='0' then
@@ -96,7 +98,7 @@ begin
   begin
     if rising_edge(clk) then
       if valid='1' then
-        report "DATA: " & str(datareg);
+        --report "DATA: " & str(datareg);
       end if;
     end if;
   end process;

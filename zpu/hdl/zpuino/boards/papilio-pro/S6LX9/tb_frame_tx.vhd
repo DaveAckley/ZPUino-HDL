@@ -3,6 +3,10 @@ use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 
 entity tb_frame_tx is
+  port (
+    clk: out std_logic;
+    data:out std_logic
+  );
 end entity tb_frame_tx;
 
 architecture sim of tb_frame_tx is
@@ -14,7 +18,7 @@ architecture sim of tb_frame_tx is
   signal w_txclk: std_logic := '1';
   signal w_rst: std_logic := '1';
   signal w_txrst: std_logic := '1';
-  signal clk, data:std_logic;
+
   component frame_tx is
   port (
     -- Host clocks
@@ -103,10 +107,10 @@ begin
         cnt <= cnt + 1;
         data_write_enable<='0';
         case cnt is
-          when 100 =>
+          when 4200 =>
             data_write<='1' & x"7EAAAA00";
             data_write_enable<='1';
-          when 1600 =>
+          when 5000 =>
             data_write<='1' & x"FFFFFFFF";
             data_write_enable<='1';
           when others =>
@@ -115,11 +119,4 @@ begin
     end process;
   end block;
 
-  des: deserializer
-  port map (
-    clk     => clk,
-    data    => data
-  );
-
-  
 end sim;

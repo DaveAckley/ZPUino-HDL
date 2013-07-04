@@ -449,14 +449,14 @@ begin
       pps_out_slot => ppsout_info_slot,
       pps_out_pin  => ppsout_info_pin,
 
-      m_wb_dat_o    => open,
-      m_wb_dat_i    => (others => 'X'),
-      m_wb_adr_i    => (others => 'X'),
-      m_wb_we_i     => '0',
-      m_wb_cyc_i    => '0',
-      m_wb_stb_i    => '0',
-      m_wb_ack_o    => open,
-      m_wb_stall_o  => open,
+      m_wb_dat_o    => m_wb_dat_o,
+      m_wb_dat_i    => m_wb_dat_i,
+      m_wb_adr_i    => m_wb_adr_i,
+      m_wb_we_i     => m_wb_we_i,
+      m_wb_cyc_i    => m_wb_cyc_i,
+      m_wb_stb_i    => m_wb_stb_i,
+      m_wb_ack_o    => m_wb_ack_o,
+      m_wb_stall_o  => m_wb_stall_o,
 
       wb_ack_i      => sram_wb_ack_o,
       wb_stall_i    => sram_wb_stall_o,
@@ -708,7 +708,7 @@ begin
   -- IO SLOT 9
   --
 
-  slot9: daveackley
+  slot9: ishw_slave
   port map (
     wb_clk_i      => wb_clk_i,
 	 	wb_rst_i      => wb_rst_i,

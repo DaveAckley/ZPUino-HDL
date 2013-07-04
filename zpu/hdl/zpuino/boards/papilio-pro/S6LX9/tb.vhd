@@ -179,12 +179,12 @@ architecture sim of tb is
     );
   END component;
 
-  component signalinjector is
+  component tb_frame_tx is
   port (
-    clk:  out std_logic;
-    data: out std_logic
+    clk: out std_logic;
+    data:out std_logic
   );
-  end component signalinjector;
+  end component tb_frame_tx;
 
 begin
   w_clk <= not w_clk after period/2;
@@ -260,10 +260,10 @@ begin
     wait;
   end process;
 
-  si: signalinjector
+  txtest: tb_frame_tx
   port map (
-    clk => siclk,
-    data => sidata
+    clk     => siclk,
+    data    => sidata
   );
 
   WING_C(12) <= siclk;

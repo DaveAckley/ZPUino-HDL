@@ -749,7 +749,7 @@ package zpuinopkg is
   );
   end component;
 
-  component daveackley is
+  component ishw_slave is
   port (
     wb_clk_i: in std_logic;
 	 	wb_rst_i: in std_logic;
