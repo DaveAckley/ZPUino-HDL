@@ -17,8 +17,9 @@ end entity deserializer;
 
 architecture sim of deserializer is
   signal inframe: std_logic := '0';
-  signal shreg: std_logic_vector(7 downto 0);
+  signal shreg, datareg: std_logic_vector(7 downto 0);
   signal issync: std_logic;
+  signal isidle: std_logic;
   signal isescape: std_logic;
   signal cnt: integer range 0 to 7;
   signal inescape: std_logic := '0';
@@ -27,10 +28,11 @@ begin
 
   datavalid<=valid;
   clkout <= clk;
-  dataout <= shreg;
+  dataout <= datareg;
 
   issync <= '1' when shreg(6 downto 0)="0111111" and data='1' else '0';
-  isescape <= '1' when shreg(6 downto 0)="0111111" and data='0' else '0';
+  isidle <= '1' when shreg(6 downto 0)="0111111" and data='0' else '0';
+  isescape <= '1' when shreg(5 downto 0)="011111" and data='0' else '0';
 
   process(clk)
   begin
@@ -41,6 +43,8 @@ begin
         inescape<='0';
         shreg(0)<=data;
         shreg(7 downto 1) <= shreg(6 downto 0);
+        datareg(0)<=data;
+        datareg(7 downto 1) <= datareg(6 downto 0);
         if cnt=0 then
           valid <= '1';
           cnt<=7;
@@ -54,6 +58,10 @@ begin
           inframe <= '1';
           report "Start/end FRAME";
           framedetected<='1';
+        elsif isidle='1' then
+          -- Nothing to do.
+          report "Idle TAG";
+          cnt<=7;
          else
            if isescape='0' then
             if cnt=0 then
@@ -73,9 +81,12 @@ begin
           inescape<='1';
         end if;
 
+        shreg(0)<=data;
+        shreg(7 downto 1) <= shreg(6 downto 0);
+
         if isescape='0' then
-          shreg(0)<=data;
-          shreg(7 downto 1) <= shreg(6 downto 0);
+          datareg(0)<=data;
+          datareg(7 downto 1) <= datareg(6 downto 0);
         end if;
       end if;
     end if;
@@ -85,7 +96,7 @@ begin
   begin
     if rising_edge(clk) then
       if valid='1' then
-        report "DATA: " & str(shreg);
+        report "DATA: " & str(datareg);
       end if;
     end if;
   end process;
