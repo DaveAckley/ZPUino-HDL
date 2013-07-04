@@ -148,27 +148,27 @@ begin
                 end if;
               else
                 if bscount(5)='0' then
-
-                cnt <= cnt - 1;
+                  cnt <= cnt - 1;
                 end if;
-              -- Check for bit stuff.
-              if shreg(shreg'HIGH)='1' then
-                if bscount(5)='0' then
-                  bscount(5 downto 1) <= bscount(4 downto 0);
-                  bscount(0)<='1';
+
+                -- Check for bit stuff.
+                if shreg(shreg'HIGH)='1' then
+                  if bscount(5)='0' then
+                    bscount(5 downto 1) <= bscount(4 downto 0);
+                    bscount(0)<='1';
+                  end if;
+                else
+                  bscount <= "000001";
                 end if;
-              else
-                bscount <= "000001";
+  
+                if bscount(5)='1' then
+                  bscount <= "000001";
+                else
+                  shreg(shreg'HIGH downto 1)<=shreg(shreg'HIGH-1 downto 0);
+                  shreg(0)<='X';
+                end if;
               end if;
-
-              if bscount(5)='1' then
-                bscount <= "000001";
-              else
-                shreg(shreg'HIGH downto 1)<=shreg(shreg'HIGH-1 downto 0);
-                shreg(0)<='X';
-              end if;
-              end if;
-
+           when others => null;
         end case;
       end if;
     end if;
