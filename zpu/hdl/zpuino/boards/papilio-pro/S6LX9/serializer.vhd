@@ -137,6 +137,7 @@ begin
                       bscount<="000001";
                       shreg <= data_in(31 downto 0);
                       cnt <= 31;
+                      fid <= data_in(32);
                       -- Ack read
                       data_read <= '1';
                     

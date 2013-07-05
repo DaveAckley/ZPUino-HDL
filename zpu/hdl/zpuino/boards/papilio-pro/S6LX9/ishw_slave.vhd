@@ -111,11 +111,18 @@ architecture behave of ishw_slave is
   -- Slave configuration
 
   signal ien: std_logic; -- Interrupts enabled
+  signal int: std_logic; -- Interrupt
   signal rxf: std_logic; -- RX finished
   signal rxe: std_logic; -- RX enabled
   signal txf: std_logic; -- TX finished
 
-  signal rxaddr: std_logic_vector(maxAddrBitIncIO downto 0); -- Target address for rx
+  subtype rxptr is std_logic_vector(maxAddrBitIncIO downto 8); -- 256-bytes aligned
+  type rxarray_type is array(0 to 7) of rxptr;
+
+  signal rxaddr: rxarray_type;
+  signal rxindex: integer range 0 to 7;
+  signal irxindex: integer range 0 to 7;
+
   signal txaddr: std_logic_vector(maxAddrBitIncIO downto 0); -- Source address for tx
 
   signal rxcount, rxsize, txcount: unsigned(31 downto 0);
@@ -125,11 +132,13 @@ architecture behave of ishw_slave is
   signal rxdatavalid: std_logic;
   signal writeinprogress: std_logic;
 
+  signal currentoffset: std_logic_vector(7 downto 0);
   signal ack_i: std_logic;
 
 begin
 
   id <= x"05" & x"01";
+  wb_inta_o<=int;
 
   plck: pulse port map ( pulse_in => dclkout, pulse_out => clkpulse, clk => wb_clk_i, rst => wb_rst_i );
   plfr: pulse port map ( pulse_in => dframedetected, pulse_out => frame, clk => wb_clk_i, rst => wb_rst_i );
@@ -190,6 +199,7 @@ begin
   -- LLC (Link Layer control)
 
   process(wb_clk_i)
+    variable idx: integer;-- helper
   begin
     if rising_edge(wb_clk_i) then
       if wb_rst_i='1' then
@@ -198,10 +208,61 @@ begin
         linkup <= '0';
         rxdatavalid <= '0';
         writeinprogress<='0';
+        rxindex<=0;
+        currentoffset<=(others => '0');
+        ack_i <= '0';
+        ien<='0';
+        rxe<='0';
+        int<='0';
+        rxf<='0';
+        txf<='0';
       else
+
         mi_wb_cyc_o<='0';
         mi_wb_stb_o<='0';
         mi_wb_we_o<=DontCareValue;
+        ack_i <= '0';
+
+        if wb_cyc_i='1' and wb_stb_i='1' and ack_i='0' then
+          if wb_we_i='1' then
+            if wb_adr_i(6 downto 5) = "00" then
+              case wb_adr_i(4 downto 2) is
+                when "000" =>
+                  ien <= wb_dat_i(0);
+                  rxe <= wb_dat_i(1);
+                when "001" =>
+                  if wb_dat_i(0)='1' then
+                    int <= '0';
+                    rxf<='0';
+                  end if;
+                  if wb_dat_i(1)='1' then
+                    int <= '0';
+                    txf<='1';
+                  end if;
+                when others =>
+              end case;
+            elsif wb_adr_i(6 downto 5) = "01" then
+              idx := to_integer(unsigned(wb_adr_i(4 downto 2)));
+              rxaddr(idx) <= wb_dat_i(maxAddrBitIncIO downto 8);
+            end if;
+          end if;
+          wb_dat_o <= (others => 'X');
+          case wb_adr_i(4 downto 2) is
+            when "000" =>
+              wb_dat_o(0) <= ien;
+              wb_dat_o(1) <= rxe;
+            when "001" =>
+              wb_dat_o(0) <= rxf;
+              wb_dat_o(1) <= txf;
+            when "010" =>
+              wb_dat_o <= std_logic_vector(to_unsigned(irxindex,32));
+
+            when others =>
+          end case;
+          ack_i<='1';
+        end if;
+
+        -- State processing
 
         case state is
 
@@ -244,6 +305,18 @@ begin
                 datacount <= datacount - 1;
               end if;
             else
+              -- If we see a frame, we are done.
+              if frame='1' then
+                state <= idle;
+                -- notify, interrupt, increment rx buffer...
+                rxindex <= rxindex+1;
+                irxindex <= rxindex;
+                rxf<='1';
+                if ien='1' then
+                  -- send interrupt to host...
+                  int <='1';
+                end if;
+              end if;
             end if;
           when queuewrite =>
             rxdata_q <= rxdata;
@@ -257,7 +330,7 @@ begin
         -- we should not wait for ACK here.
 
         if rxdatavalid='1' then
-          mi_wb_adr_o <= rxaddr;
+          mi_wb_adr_o <= rxaddr(rxindex) & currentoffset;
           mi_wb_dat_o <= rxdata_q;
           mi_wb_cyc_o <= '1';
           mi_wb_stb_o <= '1';
@@ -283,49 +356,14 @@ begin
           mi_wb_cyc_o<='0';
           writeinprogress<='0';
           rxdatavalid<='0';
+          -- Increment local pointer
+          currentoffset <= std_logic_vector(unsigned(currentoffset)+4);
         end if;
 
-      end if;
-    end if;
+      end if; -- wb_rst_i
+    end if; -- rising_edge(wb_clk_i)
   end process;
 
   wb_ack_o <= ack_i;
-
-  process(wb_clk_i)
-  begin
-    if rising_edge(wb_clk_i) then
-      if wb_rst_i='1' then
-        ack_i <= '0';
-        ien<='0';
-        rxe<='0';
-      else
-        ack_i <= '0';
-        if wb_cyc_i='1' and wb_stb_i='1' and ack_i='0' then
-          if wb_we_i='1' then
-            case wb_adr_i(5 downto 2) is
-              when "0000" =>
-                ien <= wb_dat_i(0);
-                rxe <= wb_dat_i(1);
-              when "0100" =>
-                -- RX buffer
-                rxaddr <= wb_dat_i(maxAddrBitIncIO downto 0);
-              when "1000" =>
-                -- RX buffer size
-                rxsize <= unsigned(wb_dat_i);
-              when others =>
-            end case;
-          end if;
-          wb_dat_o <= (others => 'X');
-          case wb_adr_i(5 downto 2) is
-            when "0000" =>
-              wb_dat_o(0) <= ien;
-              wb_dat_o(1) <= rxe;
-            when others =>
-          end case;
-          ack_i<='1';
-        end if;
-      end if;
-    end if;
-  end process;
 
 end architecture;
