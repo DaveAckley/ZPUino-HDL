@@ -766,7 +766,7 @@ package zpuinopkg is
     -- Wishbone MASTER interface
     mi_wb_dat_i: in std_logic_vector(wordSize-1 downto 0);
     mi_wb_dat_o: out std_logic_vector(wordSize-1 downto 0);
-    mi_wb_adr_o: out std_logic_vector(maxAddrBitIncIO downto 0);
+    mi_wb_adr_o: out std_logic_vector(maxAddrBit downto 0);
     mi_wb_sel_o: out std_logic_vector(3 downto 0);
     mi_wb_cti_o: out std_logic_vector(2 downto 0);
     mi_wb_we_o:  out std_logic;

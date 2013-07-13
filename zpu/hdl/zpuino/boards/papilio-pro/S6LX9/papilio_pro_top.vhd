@@ -724,7 +724,7 @@ begin
 
     mi_wb_dat_i   => m_wb_dat_o,
     mi_wb_dat_o   => m_wb_dat_i,
-    mi_wb_adr_o   => m_wb_adr_i,
+    mi_wb_adr_o   => m_wb_adr_i(maxAddrBit downto 0),
     mi_wb_sel_o   => m_wb_sel_i,
     mi_wb_cti_o   => m_wb_cti_i,
     mi_wb_we_o    => m_wb_we_i,

@@ -27,7 +27,7 @@ entity ishw_slave is
     -- Wishbone MASTER interface
     mi_wb_dat_i: in std_logic_vector(wordSize-1 downto 0);
     mi_wb_dat_o: out std_logic_vector(wordSize-1 downto 0);
-    mi_wb_adr_o: out std_logic_vector(maxAddrBitIncIO downto 0);
+    mi_wb_adr_o: out std_logic_vector(maxAddrBit downto 0);
     mi_wb_sel_o: out std_logic_vector(3 downto 0);
     mi_wb_cti_o: out std_logic_vector(2 downto 0);
     mi_wb_we_o:  out std_logic;
@@ -116,16 +116,16 @@ architecture behave of ishw_slave is
   signal rxe: std_logic; -- RX enabled
   signal txf: std_logic; -- TX finished
 
-  subtype rxptr is std_logic_vector(maxAddrBitIncIO downto 8); -- 256-bytes aligned
+  subtype rxptr is std_logic_vector(maxAddrBit downto 8); -- 256-bytes aligned
   type rxarray_type is array(0 to 7) of rxptr;
 
   signal rxaddr: rxarray_type;
   signal rxindex: integer range 0 to 7;
   signal irxindex: integer range 0 to 7;
 
-  signal txaddr: std_logic_vector(maxAddrBitIncIO downto 0); -- Source address for tx
-
-  signal rxcount, rxsize, txcount: unsigned(31 downto 0);
+  signal txaddr: std_logic_vector(maxAddrBit downto 0); -- Source address for tx
+  signal txframe: std_logic;
+  signal rxcount, rxsize, txcount, txsize: unsigned(31 downto 0);
   signal rxdata: std_logic_vector(31 downto 0);
   signal datacount: integer range 0 to 3;
   signal rxdata_q: std_logic_vector(31 downto 0);
@@ -134,6 +134,29 @@ architecture behave of ishw_slave is
 
   signal currentoffset: std_logic_vector(7 downto 0);
   signal ack_i: std_logic;
+  signal starttx, intx: std_logic;
+
+  signal mi1_wb_dat_i: std_logic_vector(wordSize-1 downto 0);
+  signal mi1_wb_dat_o: std_logic_vector(wordSize-1 downto 0);
+  signal mi1_wb_adr_o: std_logic_vector(maxAddrBit downto 0);
+  signal mi1_wb_sel_o: std_logic_vector(3 downto 0);
+  signal mi1_wb_cti_o: std_logic_vector(2 downto 0);
+  signal mi1_wb_we_o:  std_logic;
+  signal mi1_wb_cyc_o: std_logic;
+  signal mi1_wb_stb_o: std_logic;
+  signal mi1_wb_ack_i: std_logic;
+  signal mi1_wb_stall_i:std_logic;
+
+  signal mi2_wb_dat_i: std_logic_vector(wordSize-1 downto 0);
+  signal mi2_wb_dat_o: std_logic_vector(wordSize-1 downto 0);
+  signal mi2_wb_adr_o: std_logic_vector(maxAddrBit downto 0);
+  signal mi2_wb_sel_o: std_logic_vector(3 downto 0);
+  signal mi2_wb_cti_o: std_logic_vector(2 downto 0);
+  signal mi2_wb_we_o:  std_logic;
+  signal mi2_wb_cyc_o: std_logic;
+  signal mi2_wb_stb_o: std_logic;
+  signal mi2_wb_ack_i: std_logic;
+  signal mi2_wb_stall_i:std_logic;
 
 begin
 
@@ -168,6 +191,55 @@ begin
       end if;
     end if;
   end process;
+
+  arb: wbarb2_1
+  generic map (
+    ADDRESS_HIGH => maxAddrBit,
+    ADDRESS_LOW => 0
+  )
+  port map (
+    wb_clk_i      => wb_clk_i,
+	 	wb_rst_i      => wb_rst_i,
+
+    -- Master 0 signals
+
+    m0_wb_dat_o   => mi1_wb_dat_i,
+    m0_wb_dat_i   => mi1_wb_dat_o,
+    m0_wb_adr_i   => mi1_wb_adr_o,
+    m0_wb_sel_i   => mi1_wb_sel_o,
+    m0_wb_cti_i   => CTI_CYCLE_CLASSIC,
+    m0_wb_we_i    => mi1_wb_we_o,
+    m0_wb_cyc_i   => mi1_wb_cyc_o,
+    m0_wb_stb_i   => mi1_wb_stb_o,
+    m0_wb_ack_o   => mi1_wb_ack_i,
+    m0_wb_stall_o => mi1_wb_stall_i,
+
+    -- Master 1 signals
+
+    m1_wb_dat_o   => mi2_wb_dat_i,
+    m1_wb_dat_i   => mi2_wb_dat_o,
+    m1_wb_adr_i   => mi2_wb_adr_o,
+    m1_wb_sel_i   => mi2_wb_sel_o,
+    m1_wb_cti_i   => CTI_CYCLE_CLASSIC,
+    m1_wb_we_i    => mi2_wb_we_o,
+    m1_wb_cyc_i   => mi2_wb_cyc_o,
+    m1_wb_stb_i   => mi2_wb_stb_o,
+    m1_wb_ack_o   => mi2_wb_ack_i,
+    m1_wb_stall_o => mi2_wb_stall_i,
+
+    -- Slave signals
+
+    s0_wb_dat_i   => mi_wb_dat_i,
+    s0_wb_dat_o   => mi_wb_dat_o,
+    s0_wb_adr_o   => mi_wb_adr_o,
+    s0_wb_sel_o   => mi_wb_sel_o,
+    s0_wb_cti_o   => open,
+    s0_wb_we_o    => mi_wb_we_o,
+    s0_wb_cyc_o   => mi_wb_cyc_o,
+    s0_wb_stb_o   => mi_wb_stb_o,
+    s0_wb_ack_i   => mi_wb_ack_i,
+    s0_wb_stall_i => mi_wb_stall_i
+  );
 
   txs: frame_tx
     port map (
@@ -216,11 +288,16 @@ begin
         int<='0';
         rxf<='0';
         txf<='0';
+        starttx<='0';
+        intx<='0';
+        txframe<='0';
       else
-
-        mi_wb_cyc_o<='0';
-        mi_wb_stb_o<='0';
-        mi_wb_we_o<=DontCareValue;
+        starttx<='0';
+        mi1_wb_cyc_o<='0';
+        mi1_wb_stb_o<='0';
+        mi1_wb_we_o<=DontCareValue;
+        mi2_wb_cyc_o<='0';
+        mi2_wb_we_o<='0';
         ack_i <= '0';
 
         if wb_cyc_i='1' and wb_stb_i='1' and ack_i='0' then
@@ -239,11 +316,21 @@ begin
                     int <= '0';
                     txf<='1';
                   end if;
+                when "010" =>
+                  -- Set TX address
+                  txaddr <= wb_dat_i(txaddr'RANGE);
+                when "011" =>
+                  -- Set TX size
+                  txcount <= unsigned(wb_dat_i(txcount'RANGE));
+                  txsize <= unsigned(wb_dat_i(txsize'RANGE));
+                  starttx <= '1';
+                  txframe <= '1';
+
                 when others =>
               end case;
             elsif wb_adr_i(6 downto 5) = "01" then
               idx := to_integer(unsigned(wb_adr_i(4 downto 2)));
-              rxaddr(idx) <= wb_dat_i(maxAddrBitIncIO downto 8);
+              rxaddr(idx) <= wb_dat_i(maxAddrBit downto 8);
             end if;
           end if;
           wb_dat_o <= (others => 'X');
@@ -330,39 +417,106 @@ begin
         -- we should not wait for ACK here.
 
         if rxdatavalid='1' then
-          mi_wb_adr_o <= rxaddr(rxindex) & currentoffset;
-          mi_wb_dat_o <= rxdata_q;
-          mi_wb_cyc_o <= '1';
-          mi_wb_stb_o <= '1';
-          mi_wb_we_o <= '1';
+          mi1_wb_adr_o <= rxaddr(rxindex) & currentoffset;
+          mi1_wb_dat_o <= rxdata_q;
+          mi1_wb_cyc_o <= '1';
+          mi1_wb_stb_o <= '1';
+          mi1_wb_we_o <= '1';
           writeinprogress<='1';
         end if;
 
         if writeinprogress='1' then
-          mi_wb_cyc_o<='1';
+          mi1_wb_cyc_o<='1';
         end if;
 
-        if mi_wb_stall_i='0' and writeinprogress='1' then
+        if mi1_wb_stall_i='0' and writeinprogress='1' then
           --writeinprogress<='0';
           rxdatavalid<='0';
-          --mi_wb_cyc_o<='0';
-          mi_wb_stb_o<='0';
-          mi_wb_we_o<=DontCareValue;
-          mi_wb_adr_o <= (others => DontCareValue);
-          mi_wb_dat_o <= (others => DontCareValue);
+          --mi1_wb_cyc_o<='0';
+          mi1_wb_stb_o<='0';
+          mi1_wb_we_o<=DontCareValue;
+          mi1_wb_adr_o <= (others => DontCareValue);
+          mi1_wb_dat_o <= (others => DontCareValue);
         end if;
 
-        if writeinprogress='1' and mi_wb_ack_i='1' then
-          mi_wb_cyc_o<='0';
+        if writeinprogress='1' and mi1_wb_ack_i='1' then
+          mi1_wb_cyc_o<='0';
           writeinprogress<='0';
           rxdatavalid<='0';
           -- Increment local pointer
           currentoffset <= std_logic_vector(unsigned(currentoffset)+4);
         end if;
 
+
+
+
+        -- TX stuff
+
+        if starttx='1' then
+          if txfifo_full='1' then
+            -- retry TX
+            starttx<='1';
+          else
+            intx<='1';
+            mi2_wb_stb_o<='1';
+            mi2_wb_cyc_o<='1';
+            mi2_wb_adr_o<=txaddr;
+          end if;
+        end if;
+
+        if intx='1' then
+
+          mi2_wb_cyc_o<='1';
+          mi2_wb_adr_o<=txaddr;
+
+          if mi2_wb_stall_i='0' then
+            if txcount=0 then
+              mi2_wb_stb_o<='0';
+            else
+              mi2_wb_stb_o<='1';
+            end if;
+          end if;
+
+          
+          if mi2_wb_stall_i='0' then
+            
+            -- TODO: abort large transfers
+            if txfifo_full='1' then
+              mi2_wb_cyc_o <= '0';
+              mi2_wb_stb_o <= DontCareValue;
+              starttx<='1'; -- Retry
+            else
+
+              if txcount/=0 then
+                txaddr <= txaddr + 4;
+                txcount <= txcount - 1;
+              end if;
+
+              if mi2_wb_ack_i='1' then
+
+                if txsize=0 then
+                  intx<='0';
+                  mi2_wb_cyc_o<='0';
+                end if;
+
+                if txsize=1 then
+                  txframe <= '1';
+                else
+                  txframe <= '0';
+                end if;
+
+                txsize<=txsize-1;
+              end if;
+            end if;
+          end if;
+        end if;
+
       end if; -- wb_rst_i
     end if; -- rising_edge(wb_clk_i)
   end process;
+
+  txfifo_in <= txframe & mi2_wb_dat_i;
+  txfifo_we <= intx and mi2_wb_ack_i;
 
   wb_ack_o <= ack_i;
 
