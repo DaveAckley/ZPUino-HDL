@@ -113,7 +113,7 @@ architecture behave of ishw is
   signal int: std_logic; -- Interrupt
   signal rxf: std_logic; -- RX finished
   signal rxe: std_logic; -- RX enabled
-  signal txf: std_logic; -- TX finished
+  --signal txf: std_logic; -- TX finished
 
   subtype rxptr is std_logic_vector(maxAddrBit downto 8); -- 256-bytes aligned
   type rxarray_type is array(0 to 7) of rxptr;
@@ -156,7 +156,9 @@ architecture behave of ishw is
   signal mi2_wb_stb_o: std_logic;
   signal mi2_wb_ack_i: std_logic;
   signal mi2_wb_stall_i:std_logic;
-
+  signal frameseen: std_logic;
+  constant FRAMESEENCOUNT: unsigned(15 downto 0) := x"ffff";
+  signal fscount: unsigned(15 downto 0);
 begin
 
   wb_inta_o<=int;
@@ -165,6 +167,27 @@ begin
   plfr: pulse port map ( pulse_in => dframedetected, pulse_out => frame, clk => wb_clk_i, rst => wb_rst_i );
   pldt: pulse port map ( pulse_in => ddatavalid, pulse_out => datavalid, clk => wb_clk_i, rst => wb_rst_i );
   -- Alvie: can we assume that after pldt (datavalid pulse) data is indeed valid ? Think so...
+
+  process(wb_clk_i)
+  begin
+    if rising_edge(wb_clk_i) then
+      if wb_rst_i='1' then
+        fscount<=FRAMESEENCOUNT;
+        frameseen <= '0';
+      else
+        if frame='1' then
+          frameseen<='1';
+          fscount<=FRAMESEENCOUNT;
+        else
+          if fscount/=x"0000" then
+            fscount<=fscount - 1;
+          else
+            frameseen<='0';
+          end if;
+        end if;
+      end if;
+    end if;
+  end process;
 
   -- Clock counter
   process(wb_clk_i)
@@ -285,7 +308,7 @@ begin
         rxe<='0';
         int<='0';
         rxf<='0';
-        txf<='0';
+        --txf<='0';
         starttx<='0';
         intx<='0';
         txframe<='0';
@@ -312,7 +335,7 @@ begin
                   end if;
                   if wb_dat_i(1)='1' then
                     int <= '0';
-                    txf<='1';
+                    --txf<='1';
                   end if;
                 when "010" =>
                   -- Set TX address
@@ -331,14 +354,18 @@ begin
               rxaddr(idx) <= wb_dat_i(maxAddrBit downto 8);
             end if;
           end if;
-          wb_dat_o <= (others => 'X');
+          wb_dat_o <= (others => '0');
           case wb_adr_i(4 downto 2) is
             when "000" =>
               wb_dat_o(0) <= ien;
               wb_dat_o(1) <= rxe;
             when "001" =>
               wb_dat_o(0) <= rxf;
-              wb_dat_o(1) <= txf;
+              --wb_dat_o(1) <= txf;
+              wb_dat_o(2) <= clkdetected;
+              wb_dat_o(3) <= frameseen;
+              wb_dat_o(4) <= intx;
+
             when "010" =>
               wb_dat_o <= std_logic_vector(to_unsigned(irxindex,32));
 
