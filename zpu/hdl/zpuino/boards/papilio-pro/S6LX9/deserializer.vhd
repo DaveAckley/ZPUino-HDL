@@ -2,7 +2,10 @@ library ieee;
 use ieee.std_logic_1164.all;
 use ieee.numeric_std.all;
 library work;
+-- synthesis translate_off
 use work.txt_util.all;
+-- synthesis translate_on
+
 
 entity deserializer is
   port (

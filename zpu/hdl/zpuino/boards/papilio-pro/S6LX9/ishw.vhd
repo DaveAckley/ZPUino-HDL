@@ -10,7 +10,7 @@ use work.zpuinopkg.all;
 use work.zpupkg.all;
 use work.wishbonepkg.all;
 
-entity ishw_slave is
+entity ishw is
   port (
     wb_clk_i: in std_logic;
 	 	wb_rst_i: in std_logic;
@@ -22,7 +22,6 @@ entity ishw_slave is
     wb_stb_i: in std_logic;
     wb_ack_o: out std_logic;
     wb_inta_o: out std_logic;
-    id:       out slot_id;
 
     -- Wishbone MASTER interface
     mi_wb_dat_i: in std_logic_vector(wordSize-1 downto 0);
@@ -37,13 +36,13 @@ entity ishw_slave is
     mi_wb_stall_i: in std_logic;
 
     -- signals to data lines
-    scki_sw:      in std_logic;
-    mosi_sw:      in std_logic;
-    miso_sw:      out std_logic
+    scki:      in std_logic;
+    mosi:      in std_logic;
+    miso:      out std_logic
   );
-end entity ishw_slave;
+end entity ishw;
 
-architecture behave of ishw_slave is
+architecture behave of ishw is
 
   component deserializer is
   port (
@@ -160,7 +159,6 @@ architecture behave of ishw_slave is
 
 begin
 
-  id <= x"05" & x"01";
   wb_inta_o<=int;
 
   plck: pulse port map ( pulse_in => dclkout, pulse_out => clkpulse, clk => wb_clk_i, rst => wb_rst_i );
@@ -252,16 +250,16 @@ begin
       empty   => txfifo_empty,
   
       -- Serial clocks and data
-      sclk    => scki_sw,
+      sclk    => scki,
       arst    => wb_rst_i,
       clkout  => open,
-      sdata   => miso_sw
+      sdata   => miso
     );
 
   ds: deserializer
     port map (
-      clk => scki_sw,
-      data => mosi_sw,
+      clk => scki,
+      data => mosi,
       datavalid => ddatavalid,
       dataout => ddataout,
       clkout => dclkout,

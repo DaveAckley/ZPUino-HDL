@@ -99,6 +99,7 @@ architecture behave of papilio_pro_top is
     clkout: out std_logic;
     clkout1: out std_logic;
     clkout2: out std_logic;
+    clkdiv: out std_logic;
     rstout: out std_logic
   );
   end component;
@@ -211,7 +212,7 @@ architecture behave of papilio_pro_top is
 
   signal   m_wb_dat_i:  std_logic_vector(wordSize-1 downto 0);
   signal   m_wb_dat_o:  std_logic_vector(wordSize-1 downto 0);
-  signal   m_wb_adr_i:  std_logic_vector(maxAddrBitIncIO downto 0);
+  signal   m_wb_adr_i:  std_logic_vector(maxAddrBit downto 0);
   signal   m_wb_sel_i:  std_logic_vector(3 downto 0);
   signal   m_wb_cti_i:  std_logic_vector(2 downto 0);
   signal   m_wb_we_i:   std_logic;
@@ -219,6 +220,28 @@ architecture behave of papilio_pro_top is
   signal   m_wb_stb_i:  std_logic;
   signal   m_wb_ack_o:  std_logic;
   signal   m_wb_stall_o:  std_logic;
+
+  signal   ishw1_m_wb_dat_i:  std_logic_vector(wordSize-1 downto 0);
+  signal   ishw1_m_wb_dat_o:  std_logic_vector(wordSize-1 downto 0);
+  signal   ishw1_m_wb_adr_i:  std_logic_vector(maxAddrBit downto 0);
+  signal   ishw1_m_wb_sel_i:  std_logic_vector(3 downto 0);
+  signal   ishw1_m_wb_cti_i:  std_logic_vector(2 downto 0);
+  signal   ishw1_m_wb_we_i:   std_logic;
+  signal   ishw1_m_wb_cyc_i:  std_logic;
+  signal   ishw1_m_wb_stb_i:  std_logic;
+  signal   ishw1_m_wb_ack_o:  std_logic;
+  signal   ishw1_m_wb_stall_o:  std_logic;
+
+  signal   ishw2_m_wb_dat_i:  std_logic_vector(wordSize-1 downto 0);
+  signal   ishw2_m_wb_dat_o:  std_logic_vector(wordSize-1 downto 0);
+  signal   ishw2_m_wb_adr_i:  std_logic_vector(maxAddrBit downto 0);
+  signal   ishw2_m_wb_sel_i:  std_logic_vector(3 downto 0);
+  signal   ishw2_m_wb_cti_i:  std_logic_vector(2 downto 0);
+  signal   ishw2_m_wb_we_i:   std_logic;
+  signal   ishw2_m_wb_cyc_i:  std_logic;
+  signal   ishw2_m_wb_stb_i:  std_logic;
+  signal   ishw2_m_wb_ack_o:  std_logic;
+  signal   ishw2_m_wb_stall_o:  std_logic;
 
   signal np_ram_wb_ack_o:       std_logic;
   signal np_ram_wb_dat_i:       std_logic_vector(wordSize-1 downto 0);
@@ -336,6 +359,8 @@ architecture behave of papilio_pro_top is
 
 
   signal scki_sw, mosi_sw, miso_sw: std_logic;
+  signal mcko_wt, mosi_wt, miso_wt: std_logic;
+  signal clkdiv: std_logic;
 
 begin
 
@@ -360,6 +385,7 @@ begin
     clkout  => sysclk,
     clkout1  => sysclk_sram_we,
     clkout2  => sysclk_sram_wen,
+    clkdiv   => clkdiv,
     rstout  => clkgen_rst
   );
 
@@ -400,14 +426,19 @@ begin
   pin34: IOPAD port map(I => gpio_o(34),O => gpio_i(34),T => gpio_t(34),C => sysclk,PAD => WING_C(2) );
   pin35: IOPAD port map(I => gpio_o(35),O => gpio_i(35),T => gpio_t(35),C => sysclk,PAD => WING_C(3) );
   pin36: IOPAD port map(I => gpio_o(36),O => gpio_i(36),T => gpio_t(36),C => sysclk,PAD => WING_C(4) );
-  pin37: IOPAD port map(I => gpio_o(37),O => gpio_i(37),T => gpio_t(37),C => sysclk,PAD => WING_C(5) );
-  pin38: IOPAD port map(I => gpio_o(38),O => gpio_i(38),T => gpio_t(38),C => sysclk,PAD => WING_C(6) );
-  pin39: IOPAD port map(I => gpio_o(39),O => gpio_i(39),T => gpio_t(39),C => sysclk,PAD => WING_C(7) );
+  --pin37: IOPAD port map(I => gpio_o(37),O => gpio_i(37),T => gpio_t(37),C => sysclk,PAD => WING_C(5) );
+  --pin38: IOPAD port map(I => gpio_o(38),O => gpio_i(38),T => gpio_t(38),C => sysclk,PAD => WING_C(6) );
+  --pin39: IOPAD port map(I => gpio_o(39),O => gpio_i(39),T => gpio_t(39),C => sysclk,PAD => WING_C(7) );
+  pin37: OPAD port map ( I => mosi_wt, PAD => WING_C(5));
+  miso_wt <= WING_C(6);
+  pin39: OPAD port map ( I => mcko_wt, PAD => WING_C(7));
+  
+
   pin40: IOPAD port map(I => gpio_o(40),O => gpio_i(40),T => gpio_t(40),C => sysclk,PAD => WING_C(8) );
   pin41: IOPAD port map(I => gpio_o(41),O => gpio_i(41),T => gpio_t(41),C => sysclk,PAD => WING_C(9) );
   pin42: IOPAD port map(I => gpio_o(42),O => gpio_i(42),T => gpio_t(42),C => sysclk,PAD => WING_C(10) );
   pin43: IOPAD port map(I => gpio_o(43),O => gpio_i(43),T => gpio_t(43),C => sysclk,PAD => WING_C(11) );
-
+               
   scki_sw <= WING_C(12); -- No IPAD sync
 
   pin45: IOPAD port map(I => gpio_o(45),O => gpio_i(45),T => gpio_t(45),C => sysclk,PAD => WING_C(13) );
@@ -451,7 +482,8 @@ begin
 
       m_wb_dat_o    => m_wb_dat_o,
       m_wb_dat_i    => m_wb_dat_i,
-      m_wb_adr_i    => m_wb_adr_i,
+      m_wb_adr_i(maxAddrBitIncIO downto maxAddrBit+1) => "XXXXX",
+      m_wb_adr_i(maxAddrBit downto 0)    => m_wb_adr_i,
       m_wb_we_i     => m_wb_we_i,
       m_wb_cyc_i    => m_wb_cyc_i,
       m_wb_stb_i    => m_wb_stb_i,
@@ -722,20 +754,20 @@ begin
     wb_inta_o     => slot_interrupt(9),
     id            => slot_id(9),
 
-    mi_wb_dat_i   => m_wb_dat_o,
-    mi_wb_dat_o   => m_wb_dat_i,
-    mi_wb_adr_o   => m_wb_adr_i(maxAddrBit downto 0),
-    mi_wb_sel_o   => m_wb_sel_i,
-    mi_wb_cti_o   => m_wb_cti_i,
-    mi_wb_we_o    => m_wb_we_i,
-    mi_wb_cyc_o   => m_wb_cyc_i,
-    mi_wb_stb_o   => m_wb_stb_i,
-    mi_wb_ack_i   => m_wb_ack_o,
-    mi_wb_stall_i => m_wb_stall_o,
+    mi_wb_dat_i   => ishw1_m_wb_dat_o,
+    mi_wb_dat_o   => ishw1_m_wb_dat_i,
+    mi_wb_adr_o   => ishw1_m_wb_adr_i(maxAddrBit downto 0),
+    mi_wb_sel_o   => ishw1_m_wb_sel_i,
+    mi_wb_cti_o   => ishw1_m_wb_cti_i,
+    mi_wb_we_o    => ishw1_m_wb_we_i,
+    mi_wb_cyc_o   => ishw1_m_wb_cyc_i,
+    mi_wb_stb_o   => ishw1_m_wb_stb_i,
+    mi_wb_ack_i   => ishw1_m_wb_ack_o,
+    mi_wb_stall_i => ishw1_m_wb_stall_o,
 
-    scki_sw       => scki_sw,
-    mosi_sw       => mosi_sw,
-    miso_sw       => miso_sw
+    scki       => scki_sw,
+    mosi       => mosi_sw,
+    miso       => miso_sw
   );
 
 
@@ -743,7 +775,7 @@ begin
   -- IO SLOT 10
   --
 
-  slot10: zpuino_empty_device
+  slot10: ishw_master
   port map (
     wb_clk_i      => wb_clk_i,
 	 	wb_rst_i      => wb_rst_i,
@@ -755,7 +787,23 @@ begin
     wb_stb_i      => slot_stb(10),
     wb_ack_o      => slot_ack(10),
     wb_inta_o     => slot_interrupt(10),
-    id            => slot_id(10)
+    id            => slot_id(10),
+
+    mi_wb_dat_i   => ishw2_m_wb_dat_o,
+    mi_wb_dat_o   => ishw2_m_wb_dat_i,
+    mi_wb_adr_o   => ishw2_m_wb_adr_i(maxAddrBit downto 0),
+    mi_wb_sel_o   => ishw2_m_wb_sel_i,
+    mi_wb_cti_o   => ishw2_m_wb_cti_i,
+    mi_wb_we_o    => ishw2_m_wb_we_i,
+    mi_wb_cyc_o   => ishw2_m_wb_cyc_i,
+    mi_wb_stb_o   => ishw2_m_wb_stb_i,
+    mi_wb_ack_i   => ishw2_m_wb_ack_o,
+    mi_wb_stall_i => ishw2_m_wb_stall_o,
+
+    txclk         => clkdiv,
+    scko       => mcko_wt,
+    mosi       => mosi_wt,
+    miso       => miso_wt
   );
 
   --
@@ -876,6 +924,56 @@ begin
     ppsin_info_pin(0) <= 0;                     -- PPS pin of USPI is 0
 
   end process;
+
+  arb: wbarb2_1
+  generic map (
+    ADDRESS_HIGH => maxAddrBit,
+    ADDRESS_LOW => 0
+  )
+  port map (
+    wb_clk_i      => wb_clk_i,
+	 	wb_rst_i      => wb_rst_i,
+
+    -- Master 0 signals
+
+    m0_wb_dat_o   => ishw1_m_wb_dat_o,
+    m0_wb_dat_i   => ishw1_m_wb_dat_i,
+    m0_wb_adr_i   => ishw1_m_wb_adr_i,
+    m0_wb_sel_i   => ishw1_m_wb_sel_i,
+    m0_wb_cti_i   => CTI_CYCLE_CLASSIC,
+    m0_wb_we_i    => ishw1_m_wb_we_i,
+    m0_wb_cyc_i   => ishw1_m_wb_cyc_i,
+    m0_wb_stb_i   => ishw1_m_wb_stb_i,
+    m0_wb_ack_o   => ishw1_m_wb_ack_o,
+    m0_wb_stall_o => ishw1_m_wb_stall_o,
+
+    -- Master 1 signals
+
+    m1_wb_dat_o   => ishw2_m_wb_dat_o,
+    m1_wb_dat_i   => ishw2_m_wb_dat_i,
+    m1_wb_adr_i   => ishw2_m_wb_adr_i,
+    m1_wb_sel_i   => ishw2_m_wb_sel_i,
+    m1_wb_cti_i   => CTI_CYCLE_CLASSIC,
+    m1_wb_we_i    => ishw2_m_wb_we_i,
+    m1_wb_cyc_i   => ishw2_m_wb_cyc_i,
+    m1_wb_stb_i   => ishw2_m_wb_stb_i,
+    m1_wb_ack_o   => ishw2_m_wb_ack_o,
+    m1_wb_stall_o => ishw2_m_wb_stall_o,
+
+    -- Slave signals
+
+    s0_wb_dat_i   => m_wb_dat_o,
+    s0_wb_dat_o   => m_wb_dat_i,
+    s0_wb_adr_o   => m_wb_adr_i,
+    s0_wb_sel_o   => m_wb_sel_i,
+    s0_wb_cti_o   => open,
+    s0_wb_we_o    => m_wb_we_i,
+    s0_wb_cyc_o   => m_wb_cyc_i,
+    s0_wb_stb_o   => m_wb_stb_i,
+    s0_wb_ack_i   => m_wb_ack_o,
+    s0_wb_stall_i => m_wb_stall_o
+  );
+
 
 
 end behave;

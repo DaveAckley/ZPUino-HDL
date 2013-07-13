@@ -776,10 +776,46 @@ package zpuinopkg is
     mi_wb_stall_i: in std_logic;
 
     -- signals to data lines
-    scki_sw:      in std_logic;
-    mosi_sw:      in std_logic;
-    miso_sw:      out std_logic
+    scki:      in std_logic;
+    mosi:      in std_logic;
+    miso:      out std_logic
   );
   end component;
+
+  component ishw_master is
+  port (
+    wb_clk_i: in std_logic;
+	 	wb_rst_i: in std_logic;
+    wb_dat_o: out std_logic_vector(wordSize-1 downto 0);
+    wb_dat_i: in std_logic_vector(wordSize-1 downto 0);
+    wb_adr_i: in std_logic_vector(maxIObit downto minIObit);
+    wb_we_i:  in std_logic;
+    wb_cyc_i: in std_logic;
+    wb_stb_i: in std_logic;
+    wb_ack_o: out std_logic;
+    wb_inta_o: out std_logic;
+    id:       out slot_id;
+
+    -- Wishbone MASTER interface
+    mi_wb_dat_i: in std_logic_vector(wordSize-1 downto 0);
+    mi_wb_dat_o: out std_logic_vector(wordSize-1 downto 0);
+    mi_wb_adr_o: out std_logic_vector(maxAddrBit downto 0);
+    mi_wb_sel_o: out std_logic_vector(3 downto 0);
+    mi_wb_cti_o: out std_logic_vector(2 downto 0);
+    mi_wb_we_o:  out std_logic;
+    mi_wb_cyc_o: out std_logic;
+    mi_wb_stb_o: out std_logic;
+    mi_wb_ack_i: in std_logic;
+    mi_wb_stall_i: in std_logic;
+
+
+    txclk:        in std_logic;
+
+    -- signals to data lines
+    scko:      out std_logic;
+    mosi:      out std_logic;
+    miso:      in std_logic
+  );
+  end component ishw_master;
 
 end package zpuinopkg;
