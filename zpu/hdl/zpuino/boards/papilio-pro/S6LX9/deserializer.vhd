@@ -6,7 +6,6 @@ library work;
 use work.txt_util.all;
 -- synthesis translate_on
 
-
 entity deserializer is
   port (
     clk: in std_logic;

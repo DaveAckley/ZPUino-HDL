@@ -1,8 +1,13 @@
 SRC= \../../../tx_unit_sim.vhd \
+ishw_slave.vhd \
+deserializer.vhd \
+serializer.vhd \
+frame_tx.vhd \
+tb_frame_tx.vhd \
 ../../../lsu.vhd \
 ../../../zpuino_top_icache.vhd \
 ../../../pty.vhd \
-mt48lc16m16a2.vhd \
+../../../../../../../nonfree/mt48lc16m16a2.vhd \
 sim.vhd \
 sdram_wrap.vhd \
 ../../../sim/Internal_Logic.vhd \
