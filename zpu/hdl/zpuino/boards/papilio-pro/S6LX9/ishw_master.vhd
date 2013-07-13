@@ -119,6 +119,8 @@ begin
       miso       => mosi
     );
 
+  ntxclk <= not txclk;
+
   -- ODDR2 for clock output.
   clock: ODDR2
     generic map (
