@@ -124,7 +124,7 @@ architecture behave of ishw is
 
   signal txaddr: std_logic_vector(maxAddrBit downto 0); -- Source address for tx
   signal txframe: std_logic;
-  signal rxcount, rxsize, txcount, txsize: unsigned(31 downto 0);
+  signal rxcount, rxsize, txcount, txsize: unsigned(5 downto 0);
   signal rxdata: std_logic_vector(31 downto 0);
   signal datacount: integer range 0 to 3;
   signal rxdata_q: std_logic_vector(31 downto 0);
@@ -368,6 +368,9 @@ begin
 
             when "010" =>
               wb_dat_o <= std_logic_vector(to_unsigned(irxindex,32));
+            when "011" =>
+              -- This is not valid...
+              wb_dat_o(rxsize'RANGE) <= std_logic_vector(rxsize);
 
             when others =>
           end case;
@@ -389,6 +392,7 @@ begin
             else
               if datavalid='1' then
                 if linkup='1' then
+                  rxcount <= (others => '1');
                   state <= framedata;
                   rxdata(31 downto 8)<=rxdata(23 downto 0);
                   rxdata(7 downto 0) <= ddataout;
@@ -407,14 +411,20 @@ begin
 
           when framedata =>
             if datavalid='1' then
-              --report "Data" severity failure;
-              rxdata(31 downto 8)<=rxdata(23 downto 0);
-              rxdata(7 downto 0) <= ddataout;
-              if datacount=0 then
-                datacount <= 3;
-                state <= queuewrite;
+              if rxsize/=0 then
+                --report "Data" severity failure;
+                rxdata(31 downto 8)<=rxdata(23 downto 0);
+                rxdata(7 downto 0) <= ddataout;
+                if datacount=0 then
+                  datacount <= 3;
+                  rxsize<=rxsize - 1;
+                  state <= queuewrite;
+                else
+                  datacount <= datacount - 1;
+                end if;
               else
-                datacount <= datacount - 1;
+                -- Overrun...
+                state <= idle;
               end if;
             else
               -- If we see a frame, we are done.
@@ -423,11 +433,15 @@ begin
                 -- notify, interrupt, increment rx buffer...
                 rxindex <= rxindex+1;
                 irxindex <= rxindex;
+                rxsize <= rxcount;
+
                 rxf<='1';
                 if ien='1' then
                   -- send interrupt to host...
                   int <='1';
                 end if;
+              else
+
               end if;
             end if;
           when queuewrite =>
