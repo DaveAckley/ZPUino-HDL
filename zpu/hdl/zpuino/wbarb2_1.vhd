@@ -8,7 +8,7 @@ use work.zpu_config.all;
 entity wbarb2_1 is
   generic (
     ADDRESS_HIGH: integer := maxIObit;
-    ADDRESS_LOW: integer := maxIObit
+    ADDRESS_LOW: integer := minIObit
   );
   port (
     wb_clk_i: in std_logic;
