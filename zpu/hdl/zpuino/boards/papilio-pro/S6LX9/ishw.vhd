@@ -159,6 +159,8 @@ architecture behave of ishw is
   signal frameseen: std_logic;
   constant FRAMESEENCOUNT: unsigned(15 downto 0) := x"ffff";
   signal fscount: unsigned(15 downto 0);
+  signal writeissued: std_logic;
+
 begin
 
   wb_inta_o<=int;
@@ -312,11 +314,13 @@ begin
         starttx<='0';
         intx<='0';
         txframe<='0';
+        rxdatavalid<='0';
       else
+        rxdatavalid<='0';
         starttx<='0';
         mi1_wb_cyc_o<='0';
         mi1_wb_stb_o<='0';
-        mi1_wb_we_o<=DontCareValue;
+        --mi1_wb_we_o<=DontCareValue;
         mi2_wb_cyc_o<='0';
         mi2_wb_we_o<='0';
         ack_i <= '0';
@@ -385,6 +389,7 @@ begin
             if rxe='1' then
               if frame='1' then -- Signalled a frame.
                 state <= framecontrol;
+                currentoffset<=(others => '0');
               end if;
             end if;
 
@@ -417,13 +422,13 @@ begin
           when framedata =>
             if rxe='1' then
               if datavalid='1' then
-                if rxsize/=0 then
+                if rxcount/=0 then
                   --report "Data" severity failure;
                   rxdata(31 downto 8)<=rxdata(23 downto 0);
                   rxdata(7 downto 0) <= ddataout;
                   if datacount=0 then
                     datacount <= 3;
-                    rxsize<=rxsize - 1;
+                    rxcount<=rxcount - 1;
                     state <= queuewrite;
                   else
                     datacount <= datacount - 1;
@@ -470,16 +475,30 @@ begin
           mi1_wb_cyc_o <= '1';
           mi1_wb_stb_o <= '1';
           mi1_wb_we_o <= '1';
+          writeissued<='0';
           writeinprogress<='1';
         end if;
 
         if writeinprogress='1' then
           mi1_wb_cyc_o<='1';
+
+          if writeissued='0' then
+            mi1_wb_stb_o <= '1';
+            mi1_wb_we_o <= '1';
+            --mi1_wb_adr_o <= rxaddr(rxindex) & currentoffset;
+            --mi1_wb_dat_o <= rxdata_q;
+          else
+            mi1_wb_stb_o <= '0';
+            mi1_wb_we_o <= DontCareValue;
+            mi1_wb_adr_o <= (others => DontCareValue);
+            mi1_wb_dat_o <= (others => DontCareValue);
+          end if;
         end if;
 
         if mi1_wb_stall_i='0' and writeinprogress='1' then
           --writeinprogress<='0';
           rxdatavalid<='0';
+          writeissued<='1';
           --mi1_wb_cyc_o<='0';
           mi1_wb_stb_o<='0';
           mi1_wb_we_o<=DontCareValue;
