@@ -134,7 +134,7 @@ begin
                   else
                     if data_avail='1' then  -- We have more data, shift it
                       --state <= shift;
-                      bscount<="000001";
+                      --bscount<="000001"; Keep count... this is bit aligned
                       shreg <= data_in(31 downto 0);
                       cnt <= 31;
                       fid <= data_in(32);
@@ -151,7 +151,18 @@ begin
                     end if;
                   end if;
                 end if;
-              else
+
+                -- Check for bit stuff.
+                if shreg(shreg'HIGH)='1' then
+                  if bscount(5)='0' then
+                    bscount(5 downto 1) <= bscount(4 downto 0);
+                    bscount(0)<='1';
+                  end if;
+                else
+                  bscount <= "000001";
+                end if;
+
+              else -- cnt=0
                 if bscount(5)='0' then
                   cnt <= cnt - 1;
                 end if;
