@@ -382,67 +382,76 @@ begin
         case state is
 
           when idle =>
-            if frame='1' then -- Signalled a frame.
-              state <= framecontrol;
+            if rxe='1' then
+              if frame='1' then -- Signalled a frame.
+                state <= framecontrol;
+              end if;
             end if;
 
           when framecontrol =>
-            if frame='1' then -- Hmm, an empty frame it seems ?
-              linkup<='1';
-            else
-              if datavalid='1' then
-                if linkup='1' then
-                  rxcount <= (others => '1');
-                  state <= framedata;
-                  rxdata(31 downto 8)<=rxdata(23 downto 0);
-                  rxdata(7 downto 0) <= ddataout;
-                  datacount <= 2;
-                else
-                  --state <= framedata;
+            if rxe='1' then
+              if frame='1' then -- Hmm, an empty frame it seems ?
+                linkup<='1';
+              else
+                if datavalid='1' then
+                  if linkup='1' then
+                    rxcount <= (others => '1');
+                    state <= framedata;
+                    rxdata(31 downto 8)<=rxdata(23 downto 0);
+                    rxdata(7 downto 0) <= ddataout;
+                    datacount <= 2;
+                  else
+                    --state <= framedata;
+                  end if;
                 end if;
               end if;
-            end if;
-
-            if clkdetected='0' then
-              -- We lost clock.
-              linkup <= '0';
+  
+              if clkdetected='0' then
+                -- We lost clock.
+                linkup <= '0';
+                state <= idle;
+              end if;
+            else
               state <= idle;
             end if;
-
           when framedata =>
-            if datavalid='1' then
-              if rxsize/=0 then
-                --report "Data" severity failure;
-                rxdata(31 downto 8)<=rxdata(23 downto 0);
-                rxdata(7 downto 0) <= ddataout;
-                if datacount=0 then
-                  datacount <= 3;
-                  rxsize<=rxsize - 1;
-                  state <= queuewrite;
+            if rxe='1' then
+              if datavalid='1' then
+                if rxsize/=0 then
+                  --report "Data" severity failure;
+                  rxdata(31 downto 8)<=rxdata(23 downto 0);
+                  rxdata(7 downto 0) <= ddataout;
+                  if datacount=0 then
+                    datacount <= 3;
+                    rxsize<=rxsize - 1;
+                    state <= queuewrite;
+                  else
+                    datacount <= datacount - 1;
+                  end if;
                 else
-                  datacount <= datacount - 1;
+                  -- Overrun...
+                  state <= idle;
                 end if;
               else
-                -- Overrun...
-                state <= idle;
+                -- If we see a frame, we are done.
+                if frame='1' then
+                  state <= idle;
+                  -- notify, interrupt, increment rx buffer...
+                  rxindex <= rxindex+1;
+                  irxindex <= rxindex;
+                  rxsize <= rxcount;
+  
+                  rxf<='1';
+                  if ien='1' then
+                    -- send interrupt to host...
+                    int <='1';
+                  end if;
+                else
+  
+                end if;
               end if;
             else
-              -- If we see a frame, we are done.
-              if frame='1' then
-                state <= idle;
-                -- notify, interrupt, increment rx buffer...
-                rxindex <= rxindex+1;
-                irxindex <= rxindex;
-                rxsize <= rxcount;
-
-                rxf<='1';
-                if ien='1' then
-                  -- send interrupt to host...
-                  int <='1';
-                end if;
-              else
-
-              end if;
+              state <= idle;
             end if;
           when queuewrite =>
             rxdata_q <= rxdata;
