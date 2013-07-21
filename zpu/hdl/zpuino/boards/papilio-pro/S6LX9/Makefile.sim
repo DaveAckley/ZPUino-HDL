@@ -1,4 +1,5 @@
 SRC= \../../../tx_unit_sim.vhd \
+wbarb8_1.vhd \
 ishw_slave.vhd \
 deserializer.vhd \
 serializer.vhd \

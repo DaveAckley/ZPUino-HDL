@@ -1,4 +1,8 @@
+-- 
+-- THIS IS A GENERATED FILE, DO NOT EDIT!  INSTEAD, MAKE CHANGES IN
+-- ISHW/components/tiles/zpuino/d8fw/papilio_pro_top.vhd.dat!
 --
+-- GENERATED: Sun Jul 21 00:35:57 2013 by Ackley 
 --
 --  ZPUINO implementation on Gadget Factory 'Papilio Pro' Board
 -- 
@@ -187,9 +191,6 @@ architecture behave of papilio_pro_top is
   signal timers_interrupt:  std_logic_vector(1 downto 0);
   signal timers_pwm:        std_logic_vector(1 downto 0);
 
-  -- Sigmadelta output
-  signal sigmadelta_spp_data: std_logic_vector(1 downto 0);
-
   -- main SPI signals
   signal spi_pf_miso: std_logic;
   signal spi_pf_mosi: std_logic;
@@ -221,27 +222,101 @@ architecture behave of papilio_pro_top is
   signal   m_wb_ack_o:  std_logic;
   signal   m_wb_stall_o:  std_logic;
 
-  signal   ishw1_m_wb_dat_i:  std_logic_vector(wordSize-1 downto 0);
-  signal   ishw1_m_wb_dat_o:  std_logic_vector(wordSize-1 downto 0);
-  signal   ishw1_m_wb_adr_i:  std_logic_vector(maxAddrBit downto 0);
-  signal   ishw1_m_wb_sel_i:  std_logic_vector(3 downto 0);
-  signal   ishw1_m_wb_cti_i:  std_logic_vector(2 downto 0);
-  signal   ishw1_m_wb_we_i:   std_logic;
-  signal   ishw1_m_wb_cyc_i:  std_logic;
-  signal   ishw1_m_wb_stb_i:  std_logic;
-  signal   ishw1_m_wb_ack_o:  std_logic;
-  signal   ishw1_m_wb_stall_o:  std_logic;
+  -- Signal definitions for the NorTh (ishw_nt) face DMA access
+  signal   ishw_nt_m_wb_dat_i:  std_logic_vector(wordSize-1 downto 0);
+  signal   ishw_nt_m_wb_dat_o:  std_logic_vector(wordSize-1 downto 0);
+  signal   ishw_nt_m_wb_adr_i:  std_logic_vector(maxAddrBit downto 0);
+  signal   ishw_nt_m_wb_sel_i:  std_logic_vector(3 downto 0);
+  signal   ishw_nt_m_wb_cti_i:  std_logic_vector(2 downto 0);
+  signal   ishw_nt_m_wb_we_i:   std_logic;
+  signal   ishw_nt_m_wb_cyc_i:  std_logic;
+  signal   ishw_nt_m_wb_stb_i:  std_logic;
+  signal   ishw_nt_m_wb_ack_o:  std_logic;
+  signal   ishw_nt_m_wb_stall_o:  std_logic;
 
-  signal   ishw2_m_wb_dat_i:  std_logic_vector(wordSize-1 downto 0);
-  signal   ishw2_m_wb_dat_o:  std_logic_vector(wordSize-1 downto 0);
-  signal   ishw2_m_wb_adr_i:  std_logic_vector(maxAddrBit downto 0);
-  signal   ishw2_m_wb_sel_i:  std_logic_vector(3 downto 0);
-  signal   ishw2_m_wb_cti_i:  std_logic_vector(2 downto 0);
-  signal   ishw2_m_wb_we_i:   std_logic;
-  signal   ishw2_m_wb_cyc_i:  std_logic;
-  signal   ishw2_m_wb_stb_i:  std_logic;
-  signal   ishw2_m_wb_ack_o:  std_logic;
-  signal   ishw2_m_wb_stall_o:  std_logic;
+  -- Signal definitions for the NorthEast (ishw_ne) face DMA access
+  signal   ishw_ne_m_wb_dat_i:  std_logic_vector(wordSize-1 downto 0);
+  signal   ishw_ne_m_wb_dat_o:  std_logic_vector(wordSize-1 downto 0);
+  signal   ishw_ne_m_wb_adr_i:  std_logic_vector(maxAddrBit downto 0);
+  signal   ishw_ne_m_wb_sel_i:  std_logic_vector(3 downto 0);
+  signal   ishw_ne_m_wb_cti_i:  std_logic_vector(2 downto 0);
+  signal   ishw_ne_m_wb_we_i:   std_logic;
+  signal   ishw_ne_m_wb_cyc_i:  std_logic;
+  signal   ishw_ne_m_wb_stb_i:  std_logic;
+  signal   ishw_ne_m_wb_ack_o:  std_logic;
+  signal   ishw_ne_m_wb_stall_o:  std_logic;
+
+  -- Signal definitions for the EasT (ishw_et) face DMA access
+  signal   ishw_et_m_wb_dat_i:  std_logic_vector(wordSize-1 downto 0);
+  signal   ishw_et_m_wb_dat_o:  std_logic_vector(wordSize-1 downto 0);
+  signal   ishw_et_m_wb_adr_i:  std_logic_vector(maxAddrBit downto 0);
+  signal   ishw_et_m_wb_sel_i:  std_logic_vector(3 downto 0);
+  signal   ishw_et_m_wb_cti_i:  std_logic_vector(2 downto 0);
+  signal   ishw_et_m_wb_we_i:   std_logic;
+  signal   ishw_et_m_wb_cyc_i:  std_logic;
+  signal   ishw_et_m_wb_stb_i:  std_logic;
+  signal   ishw_et_m_wb_ack_o:  std_logic;
+  signal   ishw_et_m_wb_stall_o:  std_logic;
+
+  -- Signal definitions for the SouthEast (ishw_se) face DMA access
+  signal   ishw_se_m_wb_dat_i:  std_logic_vector(wordSize-1 downto 0);
+  signal   ishw_se_m_wb_dat_o:  std_logic_vector(wordSize-1 downto 0);
+  signal   ishw_se_m_wb_adr_i:  std_logic_vector(maxAddrBit downto 0);
+  signal   ishw_se_m_wb_sel_i:  std_logic_vector(3 downto 0);
+  signal   ishw_se_m_wb_cti_i:  std_logic_vector(2 downto 0);
+  signal   ishw_se_m_wb_we_i:   std_logic;
+  signal   ishw_se_m_wb_cyc_i:  std_logic;
+  signal   ishw_se_m_wb_stb_i:  std_logic;
+  signal   ishw_se_m_wb_ack_o:  std_logic;
+  signal   ishw_se_m_wb_stall_o:  std_logic;
+
+  -- Signal definitions for the SouTh (ishw_st) face DMA access
+  signal   ishw_st_m_wb_dat_i:  std_logic_vector(wordSize-1 downto 0);
+  signal   ishw_st_m_wb_dat_o:  std_logic_vector(wordSize-1 downto 0);
+  signal   ishw_st_m_wb_adr_i:  std_logic_vector(maxAddrBit downto 0);
+  signal   ishw_st_m_wb_sel_i:  std_logic_vector(3 downto 0);
+  signal   ishw_st_m_wb_cti_i:  std_logic_vector(2 downto 0);
+  signal   ishw_st_m_wb_we_i:   std_logic;
+  signal   ishw_st_m_wb_cyc_i:  std_logic;
+  signal   ishw_st_m_wb_stb_i:  std_logic;
+  signal   ishw_st_m_wb_ack_o:  std_logic;
+  signal   ishw_st_m_wb_stall_o:  std_logic;
+
+  -- Signal definitions for the SouthWest (ishw_sw) face DMA access
+  signal   ishw_sw_m_wb_dat_i:  std_logic_vector(wordSize-1 downto 0);
+  signal   ishw_sw_m_wb_dat_o:  std_logic_vector(wordSize-1 downto 0);
+  signal   ishw_sw_m_wb_adr_i:  std_logic_vector(maxAddrBit downto 0);
+  signal   ishw_sw_m_wb_sel_i:  std_logic_vector(3 downto 0);
+  signal   ishw_sw_m_wb_cti_i:  std_logic_vector(2 downto 0);
+  signal   ishw_sw_m_wb_we_i:   std_logic;
+  signal   ishw_sw_m_wb_cyc_i:  std_logic;
+  signal   ishw_sw_m_wb_stb_i:  std_logic;
+  signal   ishw_sw_m_wb_ack_o:  std_logic;
+  signal   ishw_sw_m_wb_stall_o:  std_logic;
+
+  -- Signal definitions for the WesT (ishw_wt) face DMA access
+  signal   ishw_wt_m_wb_dat_i:  std_logic_vector(wordSize-1 downto 0);
+  signal   ishw_wt_m_wb_dat_o:  std_logic_vector(wordSize-1 downto 0);
+  signal   ishw_wt_m_wb_adr_i:  std_logic_vector(maxAddrBit downto 0);
+  signal   ishw_wt_m_wb_sel_i:  std_logic_vector(3 downto 0);
+  signal   ishw_wt_m_wb_cti_i:  std_logic_vector(2 downto 0);
+  signal   ishw_wt_m_wb_we_i:   std_logic;
+  signal   ishw_wt_m_wb_cyc_i:  std_logic;
+  signal   ishw_wt_m_wb_stb_i:  std_logic;
+  signal   ishw_wt_m_wb_ack_o:  std_logic;
+  signal   ishw_wt_m_wb_stall_o:  std_logic;
+
+  -- Signal definitions for the NorthWest (ishw_nw) face DMA access
+  signal   ishw_nw_m_wb_dat_i:  std_logic_vector(wordSize-1 downto 0);
+  signal   ishw_nw_m_wb_dat_o:  std_logic_vector(wordSize-1 downto 0);
+  signal   ishw_nw_m_wb_adr_i:  std_logic_vector(maxAddrBit downto 0);
+  signal   ishw_nw_m_wb_sel_i:  std_logic_vector(3 downto 0);
+  signal   ishw_nw_m_wb_cti_i:  std_logic_vector(2 downto 0);
+  signal   ishw_nw_m_wb_we_i:   std_logic;
+  signal   ishw_nw_m_wb_cyc_i:  std_logic;
+  signal   ishw_nw_m_wb_stb_i:  std_logic;
+  signal   ishw_nw_m_wb_ack_o:  std_logic;
+  signal   ishw_nw_m_wb_stall_o:  std_logic;
 
   signal np_ram_wb_ack_o:       std_logic;
   signal np_ram_wb_dat_i:       std_logic_vector(wordSize-1 downto 0);
@@ -357,9 +432,38 @@ architecture behave of papilio_pro_top is
   );
   end component;
 
+  -- Signal definitions for the NorTh (NT) face ishw device
+  signal ishw_nt_ckom: std_logic; 
+  signal ishw_nt_lcki, ishw_nt_lcko, ishw_nt_dati, ishw_nt_dato : std_logic;
 
-  signal scki_sw, mosi_sw, miso_sw: std_logic;
-  signal mcko_wt, mosi_wt, miso_wt: std_logic;
+  -- Signal definitions for the NorthEast (NE) face ishw device
+  signal ishw_ne_ckis: std_logic; 
+  signal ishw_ne_lcki, ishw_ne_lcko, ishw_ne_dati, ishw_ne_dato : std_logic;
+
+  -- Signal definitions for the EasT (ET) face ishw device
+  signal ishw_et_ckom: std_logic; 
+  signal ishw_et_lcki, ishw_et_lcko, ishw_et_dati, ishw_et_dato : std_logic;
+
+  -- Signal definitions for the SouthEast (SE) face ishw device
+  signal ishw_se_ckis: std_logic; 
+  signal ishw_se_lcki, ishw_se_lcko, ishw_se_dati, ishw_se_dato : std_logic;
+
+  -- Signal definitions for the SouTh (ST) face ishw device
+  signal ishw_st_ckis: std_logic; 
+  signal ishw_st_lcki, ishw_st_lcko, ishw_st_dati, ishw_st_dato : std_logic;
+
+  -- Signal definitions for the SouthWest (SW) face ishw device
+  signal ishw_sw_ckom: std_logic; 
+  signal ishw_sw_lcki, ishw_sw_lcko, ishw_sw_dati, ishw_sw_dato : std_logic;
+
+  -- Signal definitions for the WesT (WT) face ishw device
+  signal ishw_wt_ckis: std_logic; 
+  signal ishw_wt_lcki, ishw_wt_lcko, ishw_wt_dati, ishw_wt_dato : std_logic;
+
+  -- Signal definitions for the NorthWest (NW) face ishw device
+  signal ishw_nw_ckom: std_logic; 
+  signal ishw_nw_lcki, ishw_nw_lcko, ishw_nw_dati, ishw_nw_dato : std_logic;
+
   signal clkdiv: std_logic;
 
 begin
@@ -389,64 +493,80 @@ begin
     rstout  => clkgen_rst
   );
 
-  pin00: IOPAD port map(I => gpio_o(0),O => gpio_i(0),T => gpio_t(0),C => sysclk,PAD => WING_A(0) );
-  pin01: IOPAD port map(I => gpio_o(1),O => gpio_i(1),T => gpio_t(1),C => sysclk,PAD => WING_A(1) );
-  pin02: IOPAD port map(I => gpio_o(2),O => gpio_i(2),T => gpio_t(2),C => sysclk,PAD => WING_A(2) );
-  pin03: IOPAD port map(I => gpio_o(3),O => gpio_i(3),T => gpio_t(3),C => sysclk,PAD => WING_A(3) );
-  pin04: IOPAD port map(I => gpio_o(4),O => gpio_i(4),T => gpio_t(4),C => sysclk,PAD => WING_A(4) );
-  pin05: IOPAD port map(I => gpio_o(5),O => gpio_i(5),T => gpio_t(5),C => sysclk,PAD => WING_A(5) );
-  pin06: IOPAD port map(I => gpio_o(6),O => gpio_i(6),T => gpio_t(6),C => sysclk,PAD => WING_A(6) );
-  pin07: IOPAD port map(I => gpio_o(7),O => gpio_i(7),T => gpio_t(7),C => sysclk,PAD => WING_A(7) );
-  pin08: IOPAD port map(I => gpio_o(8),O => gpio_i(8),T => gpio_t(8),C => sysclk,PAD => WING_A(8) );
-  pin09: IOPAD port map(I => gpio_o(9),O => gpio_i(9),T => gpio_t(9),C => sysclk,PAD => WING_A(9) );
+  -- GPIO (what's left of them) and pad assignments
+
+  ishw_se_lcki <= WING_A(0);   -- pin00: ISHW input; no IPAD sync
+  ishw_se_ckis <= WING_A(1);   -- pin01: ISHW input; no IPAD sync
+  pin02: OPAD port map(I => ishw_se_lcko,PAD => WING_A(2) );  -- ISHW output
+  ishw_se_dati <= WING_A(3);   -- pin03: ISHW input; no IPAD sync
+  pin04: OPAD port map(I => ishw_se_dato,PAD => WING_A(4) );  -- ISHW output
+  pin05: OPAD port map(I => ishw_et_ckom,PAD => WING_A(5) );  -- ISHW output
+  ishw_et_lcki <= WING_A(6);   -- pin06: ISHW input; no IPAD sync
+  pin07: OPAD port map(I => ishw_et_lcko,PAD => WING_A(7) );  -- ISHW output
+  ishw_et_dati <= WING_A(8);   -- pin08: ISHW input; no IPAD sync
+  pin09: OPAD port map(I => ishw_et_dato,PAD => WING_A(9) );  -- ISHW output
+
+  -- pin10 is GPIO
   pin10: IOPAD port map(I => gpio_o(10),O => gpio_i(10),T => gpio_t(10),C => sysclk,PAD => WING_A(10) );
-  pin11: IOPAD port map(I => gpio_o(11),O => gpio_i(11),T => gpio_t(11),C => sysclk,PAD => WING_A(11) );
-  pin12: IOPAD port map(I => gpio_o(12),O => gpio_i(12),T => gpio_t(12),C => sysclk,PAD => WING_A(12) );
-  pin13: IOPAD port map(I => gpio_o(13),O => gpio_i(13),T => gpio_t(13),C => sysclk,PAD => WING_A(13) );
-  pin14: IOPAD port map(I => gpio_o(14),O => gpio_i(14),T => gpio_t(14),C => sysclk,PAD => WING_A(14) );
-  pin15: IOPAD port map(I => gpio_o(15),O => gpio_i(15),T => gpio_t(15),C => sysclk,PAD => WING_A(15) );
-  pin16: IOPAD port map(I => gpio_o(16),O => gpio_i(16),T => gpio_t(16),C => sysclk,PAD => WING_B(0) );
-  pin17: IOPAD port map(I => gpio_o(17),O => gpio_i(17),T => gpio_t(17),C => sysclk,PAD => WING_B(1) );
-  pin18: IOPAD port map(I => gpio_o(18),O => gpio_i(18),T => gpio_t(18),C => sysclk,PAD => WING_B(2) );
-  pin19: IOPAD port map(I => gpio_o(19),O => gpio_i(19),T => gpio_t(19),C => sysclk,PAD => WING_B(3) );
-  pin20: IOPAD port map(I => gpio_o(20),O => gpio_i(20),T => gpio_t(20),C => sysclk,PAD => WING_B(4) );
+
+  pin11: OPAD port map(I => ishw_ne_lcko,PAD => WING_A(11) );  -- ISHW output
+  ishw_ne_ckis <= WING_A(12);   -- pin12: ISHW input; no IPAD sync
+  ishw_ne_lcki <= WING_A(13);   -- pin13: ISHW input; no IPAD sync
+  pin14: OPAD port map(I => ishw_ne_dato,PAD => WING_A(14) );  -- ISHW output
+  ishw_ne_dati <= WING_A(15);   -- pin15: ISHW input; no IPAD sync
+  pin16: OPAD port map(I => ishw_nt_ckom,PAD => WING_B(0) );  -- ISHW output
+  ishw_nt_lcki <= WING_B(1);   -- pin17: ISHW input; no IPAD sync
+  pin18: OPAD port map(I => ishw_nt_lcko,PAD => WING_B(2) );  -- ISHW output
+  ishw_nt_dati <= WING_B(3);   -- pin19: ISHW input; no IPAD sync
+  pin20: OPAD port map(I => ishw_nt_dato,PAD => WING_B(4) );  -- ISHW output
+
+  -- pin21 is GPIO
   pin21: IOPAD port map(I => gpio_o(21),O => gpio_i(21),T => gpio_t(21),C => sysclk,PAD => WING_B(5) );
+
+
+  -- pin22 is GPIO
   pin22: IOPAD port map(I => gpio_o(22),O => gpio_i(22),T => gpio_t(22),C => sysclk,PAD => WING_B(6) );
+
+
+  -- pin23 is GPIO
   pin23: IOPAD port map(I => gpio_o(23),O => gpio_i(23),T => gpio_t(23),C => sysclk,PAD => WING_B(7) );
+
+
+  -- pin24 is GPIO
   pin24: IOPAD port map(I => gpio_o(24),O => gpio_i(24),T => gpio_t(24),C => sysclk,PAD => WING_B(8) );
+
+
+  -- pin25 is GPIO
   pin25: IOPAD port map(I => gpio_o(25),O => gpio_i(25),T => gpio_t(25),C => sysclk,PAD => WING_B(9) );
-  pin26: IOPAD port map(I => gpio_o(26),O => gpio_i(26),T => gpio_t(26),C => sysclk,PAD => WING_B(10) );
-  pin27: IOPAD port map(I => gpio_o(27),O => gpio_i(27),T => gpio_t(27),C => sysclk,PAD => WING_B(11) );
-  pin28: IOPAD port map(I => gpio_o(28),O => gpio_i(28),T => gpio_t(28),C => sysclk,PAD => WING_B(12) );
-  pin29: IOPAD port map(I => gpio_o(29),O => gpio_i(29),T => gpio_t(29),C => sysclk,PAD => WING_B(13) );
-  pin30: IOPAD port map(I => gpio_o(30),O => gpio_i(30),T => gpio_t(30),C => sysclk,PAD => WING_B(14) );
+
+  ishw_st_dati <= WING_B(10);   -- pin26: ISHW input; no IPAD sync
+  pin27: OPAD port map(I => ishw_st_dato,PAD => WING_B(11) );  -- ISHW output
+  ishw_st_lcki <= WING_B(12);   -- pin28: ISHW input; no IPAD sync
+  pin29: OPAD port map(I => ishw_st_lcko,PAD => WING_B(13) );  -- ISHW output
+  ishw_st_ckis <= WING_B(14);   -- pin30: ISHW input; no IPAD sync
+
+  -- pin31 is GPIO
   pin31: IOPAD port map(I => gpio_o(31),O => gpio_i(31),T => gpio_t(31),C => sysclk,PAD => WING_B(15) );
-  pin32: IOPAD port map(I => gpio_o(32),O => gpio_i(32),T => gpio_t(32),C => sysclk,PAD => WING_C(0) );
-  pin33: IOPAD port map(I => gpio_o(33),O => gpio_i(33),T => gpio_t(33),C => sysclk,PAD => WING_C(1) );
-  pin34: IOPAD port map(I => gpio_o(34),O => gpio_i(34),T => gpio_t(34),C => sysclk,PAD => WING_C(2) );
-  pin35: IOPAD port map(I => gpio_o(35),O => gpio_i(35),T => gpio_t(35),C => sysclk,PAD => WING_C(3) );
-  pin36: IOPAD port map(I => gpio_o(36),O => gpio_i(36),T => gpio_t(36),C => sysclk,PAD => WING_C(4) );
-  --pin37: IOPAD port map(I => gpio_o(37),O => gpio_i(37),T => gpio_t(37),C => sysclk,PAD => WING_C(5) );
-  --pin38: IOPAD port map(I => gpio_o(38),O => gpio_i(38),T => gpio_t(38),C => sysclk,PAD => WING_C(6) );
-  --pin39: IOPAD port map(I => gpio_o(39),O => gpio_i(39),T => gpio_t(39),C => sysclk,PAD => WING_C(7) );
-  pin37: OPAD port map ( I => mosi_wt, PAD => WING_C(5));
-  miso_wt <= WING_C(6);
-  pin39: OPAD port map ( I => mcko_wt, PAD => WING_C(7));
-  
 
-  pin40: IOPAD port map(I => gpio_o(40),O => gpio_i(40),T => gpio_t(40),C => sysclk,PAD => WING_C(8) );
-  pin41: IOPAD port map(I => gpio_o(41),O => gpio_i(41),T => gpio_t(41),C => sysclk,PAD => WING_C(9) );
-  pin42: IOPAD port map(I => gpio_o(42),O => gpio_i(42),T => gpio_t(42),C => sysclk,PAD => WING_C(10) );
-  pin43: IOPAD port map(I => gpio_o(43),O => gpio_i(43),T => gpio_t(43),C => sysclk,PAD => WING_C(11) );
-               
-  scki_sw <= WING_C(12); -- No IPAD sync
+  pin32: OPAD port map(I => ishw_nw_lcko,PAD => WING_C(0) );  -- ISHW output
+  pin33: OPAD port map(I => ishw_nw_ckom,PAD => WING_C(1) );  -- ISHW output
+  ishw_nw_lcki <= WING_C(2);   -- pin34: ISHW input; no IPAD sync
+  pin35: OPAD port map(I => ishw_nw_dato,PAD => WING_C(3) );  -- ISHW output
+  ishw_nw_dati <= WING_C(4);   -- pin36: ISHW input; no IPAD sync
 
-  pin45: IOPAD port map(I => gpio_o(45),O => gpio_i(45),T => gpio_t(45),C => sysclk,PAD => WING_C(13) );
+  -- pin37 is GPIO
+  pin37: IOPAD port map(I => gpio_o(37),O => gpio_i(37),T => gpio_t(37),C => sysclk,PAD => WING_C(5) );
 
-  mosi_sw <= WING_C(14); -- No IPAD sync
-
-  pin47: OPAD port map(I => miso_sw, PAD => WING_C(15) );
-
+  ishw_wt_dati <= WING_C(6);   -- pin38: ISHW input; no IPAD sync
+  pin39: OPAD port map(I => ishw_wt_dato,PAD => WING_C(7) );  -- ISHW output
+  ishw_wt_lcki <= WING_C(8);   -- pin40: ISHW input; no IPAD sync
+  pin41: OPAD port map(I => ishw_wt_lcko,PAD => WING_C(9) );  -- ISHW output
+  ishw_wt_ckis <= WING_C(10);   -- pin42: ISHW input; no IPAD sync
+  ishw_sw_lcki <= WING_C(11);   -- pin43: ISHW input; no IPAD sync
+  pin44: OPAD port map(I => ishw_sw_ckom,PAD => WING_C(12) );  -- ISHW output
+  pin45: OPAD port map(I => ishw_sw_lcko,PAD => WING_C(13) );  -- ISHW output
+  ishw_sw_dati <= WING_C(14);   -- pin46: ISHW input; no IPAD sync
+  pin47: OPAD port map(I => ishw_sw_dato,PAD => WING_C(15) );  -- ISHW output
 
   -- Other ports are special, we need to avoid outputs on input-only pins
 
@@ -624,10 +744,10 @@ begin
   -- IO SLOT 5
   --
 
-  sigmadelta_inst: zpuino_sigmadelta
+  slot5: ishw_master
   port map (
-    wb_clk_i      => wb_clk_i,
-	 	wb_rst_i      => wb_rst_i,
+    Wb_clk_i      => wb_clk_i,
+    wb_rst_i      => wb_rst_i,
     wb_dat_o      => slot_read(5),
     wb_dat_i      => slot_write(5),
     wb_adr_i      => slot_address(5),
@@ -638,16 +758,28 @@ begin
     wb_inta_o     => slot_interrupt(5),
     id            => slot_id(5),
 
-    spp_data      => sigmadelta_spp_data,
-    spp_en        => open,
-    sync_in       => '1'
+    mi_wb_dat_i   => ishw_nt_m_wb_dat_o,
+    mi_wb_dat_o   => ishw_nt_m_wb_dat_i,
+    mi_wb_adr_o   => ishw_nt_m_wb_adr_i(maxAddrBit downto 0),
+    mi_wb_sel_o   => ishw_nt_m_wb_sel_i,
+    mi_wb_cti_o   => ishw_nt_m_wb_cti_i,
+    mi_wb_we_o    => ishw_nt_m_wb_we_i,
+    mi_wb_cyc_o   => ishw_nt_m_wb_cyc_i,
+    mi_wb_stb_o   => ishw_nt_m_wb_stb_i,
+    mi_wb_ack_i   => ishw_nt_m_wb_ack_o,
+    mi_wb_stall_i => ishw_nt_m_wb_stall_o,
+
+    txclk      => clkdiv,
+    scko       => ishw_nt_ckom,
+    mosi       => ishw_nt_dato,
+    miso       => ishw_nt_dati
   );
 
   --
   -- IO SLOT 6
   --
 
-  slot1: zpuino_spi
+  slot6: zpuino_spi
   port map (
     wb_clk_i      => wb_clk_i,
 	 	wb_rst_i      => wb_rst_i,
@@ -692,10 +824,10 @@ begin
   -- IO SLOT 8
   --
 
-  slot8: zpuino_empty_device
+  slot8: ishw_slave
   port map (
-    wb_clk_i      => wb_clk_i,
-	 	wb_rst_i      => wb_rst_i,
+    Wb_clk_i      => wb_clk_i,
+    wb_rst_i      => wb_rst_i,
     wb_dat_o      => slot_read(8),
     wb_dat_i      => slot_write(8),
     wb_adr_i      => slot_address(8),
@@ -704,7 +836,22 @@ begin
     wb_stb_i      => slot_stb(8),
     wb_ack_o      => slot_ack(8),
     wb_inta_o     => slot_interrupt(8),
-    id            => slot_id(8)
+    id            => slot_id(8),
+
+    mi_wb_dat_i   => ishw_ne_m_wb_dat_o,
+    mi_wb_dat_o   => ishw_ne_m_wb_dat_i,
+    mi_wb_adr_o   => ishw_ne_m_wb_adr_i(maxAddrBit downto 0),
+    mi_wb_sel_o   => ishw_ne_m_wb_sel_i,
+    mi_wb_cti_o   => ishw_ne_m_wb_cti_i,
+    mi_wb_we_o    => ishw_ne_m_wb_we_i,
+    mi_wb_cyc_o   => ishw_ne_m_wb_cyc_i,
+    mi_wb_stb_o   => ishw_ne_m_wb_stb_i,
+    mi_wb_ack_i   => ishw_ne_m_wb_ack_o,
+    mi_wb_stall_i => ishw_ne_m_wb_stall_o,
+
+    scki       => ishw_ne_ckis,
+    mosi       => ishw_ne_dati,
+    miso       => ishw_ne_dato
   );
 
   sram_inst: sdram_ctrl
@@ -736,14 +883,15 @@ begin
 
     );
     DRAM_ADDR(12) <= '0';
+
   --
   -- IO SLOT 9
   --
 
-  slot9: ishw_slave
+  slot9: ishw_master
   port map (
-    wb_clk_i      => wb_clk_i,
-	 	wb_rst_i      => wb_rst_i,
+    Wb_clk_i      => wb_clk_i,
+    wb_rst_i      => wb_rst_i,
     wb_dat_o      => slot_read(9),
     wb_dat_i      => slot_write(9),
     wb_adr_i      => slot_address(9),
@@ -754,31 +902,31 @@ begin
     wb_inta_o     => slot_interrupt(9),
     id            => slot_id(9),
 
-    mi_wb_dat_i   => ishw1_m_wb_dat_o,
-    mi_wb_dat_o   => ishw1_m_wb_dat_i,
-    mi_wb_adr_o   => ishw1_m_wb_adr_i(maxAddrBit downto 0),
-    mi_wb_sel_o   => ishw1_m_wb_sel_i,
-    mi_wb_cti_o   => ishw1_m_wb_cti_i,
-    mi_wb_we_o    => ishw1_m_wb_we_i,
-    mi_wb_cyc_o   => ishw1_m_wb_cyc_i,
-    mi_wb_stb_o   => ishw1_m_wb_stb_i,
-    mi_wb_ack_i   => ishw1_m_wb_ack_o,
-    mi_wb_stall_i => ishw1_m_wb_stall_o,
+    mi_wb_dat_i   => ishw_et_m_wb_dat_o,
+    mi_wb_dat_o   => ishw_et_m_wb_dat_i,
+    mi_wb_adr_o   => ishw_et_m_wb_adr_i(maxAddrBit downto 0),
+    mi_wb_sel_o   => ishw_et_m_wb_sel_i,
+    mi_wb_cti_o   => ishw_et_m_wb_cti_i,
+    mi_wb_we_o    => ishw_et_m_wb_we_i,
+    mi_wb_cyc_o   => ishw_et_m_wb_cyc_i,
+    mi_wb_stb_o   => ishw_et_m_wb_stb_i,
+    mi_wb_ack_i   => ishw_et_m_wb_ack_o,
+    mi_wb_stall_i => ishw_et_m_wb_stall_o,
 
-    scki       => scki_sw,
-    mosi       => mosi_sw,
-    miso       => miso_sw
+    txclk      => clkdiv,
+    scko       => ishw_et_ckom,
+    mosi       => ishw_et_dato,
+    miso       => ishw_et_dati
   );
-
 
   --
   -- IO SLOT 10
   --
 
-  slot10: ishw_master
+  slot10: ishw_slave
   port map (
-    wb_clk_i      => wb_clk_i,
-	 	wb_rst_i      => wb_rst_i,
+    Wb_clk_i      => wb_clk_i,
+    wb_rst_i      => wb_rst_i,
     wb_dat_o      => slot_read(10),
     wb_dat_i      => slot_write(10),
     wb_adr_i      => slot_address(10),
@@ -789,31 +937,30 @@ begin
     wb_inta_o     => slot_interrupt(10),
     id            => slot_id(10),
 
-    mi_wb_dat_i   => ishw2_m_wb_dat_o,
-    mi_wb_dat_o   => ishw2_m_wb_dat_i,
-    mi_wb_adr_o   => ishw2_m_wb_adr_i(maxAddrBit downto 0),
-    mi_wb_sel_o   => ishw2_m_wb_sel_i,
-    mi_wb_cti_o   => ishw2_m_wb_cti_i,
-    mi_wb_we_o    => ishw2_m_wb_we_i,
-    mi_wb_cyc_o   => ishw2_m_wb_cyc_i,
-    mi_wb_stb_o   => ishw2_m_wb_stb_i,
-    mi_wb_ack_i   => ishw2_m_wb_ack_o,
-    mi_wb_stall_i => ishw2_m_wb_stall_o,
+    mi_wb_dat_i   => ishw_se_m_wb_dat_o,
+    mi_wb_dat_o   => ishw_se_m_wb_dat_i,
+    mi_wb_adr_o   => ishw_se_m_wb_adr_i(maxAddrBit downto 0),
+    mi_wb_sel_o   => ishw_se_m_wb_sel_i,
+    mi_wb_cti_o   => ishw_se_m_wb_cti_i,
+    mi_wb_we_o    => ishw_se_m_wb_we_i,
+    mi_wb_cyc_o   => ishw_se_m_wb_cyc_i,
+    mi_wb_stb_o   => ishw_se_m_wb_stb_i,
+    mi_wb_ack_i   => ishw_se_m_wb_ack_o,
+    mi_wb_stall_i => ishw_se_m_wb_stall_o,
 
-    txclk         => clkdiv,
-    scko       => mcko_wt,
-    mosi       => mosi_wt,
-    miso       => miso_wt
+    scki       => ishw_se_ckis,
+    mosi       => ishw_se_dati,
+    miso       => ishw_se_dato
   );
 
   --
   -- IO SLOT 11
   --
 
-  slot11: zpuino_empty_device
+  slot11: ishw_slave
   port map (
-    wb_clk_i      => wb_clk_i,
-	 	wb_rst_i      => wb_rst_i,
+    Wb_clk_i      => wb_clk_i,
+    wb_rst_i      => wb_rst_i,
     wb_dat_o      => slot_read(11),
     wb_dat_i      => slot_write(11),
     wb_adr_i      => slot_address(11),
@@ -822,17 +969,32 @@ begin
     wb_stb_i      => slot_stb(11),
     wb_ack_o      => slot_ack(11),
     wb_inta_o     => slot_interrupt(11),
-    id            => slot_id(11)
+    id            => slot_id(11),
+
+    mi_wb_dat_i   => ishw_st_m_wb_dat_o,
+    mi_wb_dat_o   => ishw_st_m_wb_dat_i,
+    mi_wb_adr_o   => ishw_st_m_wb_adr_i(maxAddrBit downto 0),
+    mi_wb_sel_o   => ishw_st_m_wb_sel_i,
+    mi_wb_cti_o   => ishw_st_m_wb_cti_i,
+    mi_wb_we_o    => ishw_st_m_wb_we_i,
+    mi_wb_cyc_o   => ishw_st_m_wb_cyc_i,
+    mi_wb_stb_o   => ishw_st_m_wb_stb_i,
+    mi_wb_ack_i   => ishw_st_m_wb_ack_o,
+    mi_wb_stall_i => ishw_st_m_wb_stall_o,
+
+    scki       => ishw_st_ckis,
+    mosi       => ishw_st_dati,
+    miso       => ishw_st_dato
   );
 
   --
   -- IO SLOT 12
   --
 
-  slot12: zpuino_empty_device
+  slot12: ishw_master
   port map (
-    wb_clk_i      => wb_clk_i,
-	 	wb_rst_i      => wb_rst_i,
+    Wb_clk_i      => wb_clk_i,
+    wb_rst_i      => wb_rst_i,
     wb_dat_o      => slot_read(12),
     wb_dat_i      => slot_write(12),
     wb_adr_i      => slot_address(12),
@@ -841,17 +1003,33 @@ begin
     wb_stb_i      => slot_stb(12),
     wb_ack_o      => slot_ack(12),
     wb_inta_o     => slot_interrupt(12),
-    id            => slot_id(12)
+    id            => slot_id(12),
+
+    mi_wb_dat_i   => ishw_sw_m_wb_dat_o,
+    mi_wb_dat_o   => ishw_sw_m_wb_dat_i,
+    mi_wb_adr_o   => ishw_sw_m_wb_adr_i(maxAddrBit downto 0),
+    mi_wb_sel_o   => ishw_sw_m_wb_sel_i,
+    mi_wb_cti_o   => ishw_sw_m_wb_cti_i,
+    mi_wb_we_o    => ishw_sw_m_wb_we_i,
+    mi_wb_cyc_o   => ishw_sw_m_wb_cyc_i,
+    mi_wb_stb_o   => ishw_sw_m_wb_stb_i,
+    mi_wb_ack_i   => ishw_sw_m_wb_ack_o,
+    mi_wb_stall_i => ishw_sw_m_wb_stall_o,
+
+    txclk      => clkdiv,
+    scko       => ishw_sw_ckom,
+    mosi       => ishw_sw_dato,
+    miso       => ishw_sw_dati
   );
 
   --
   -- IO SLOT 13
   --
 
-  slot13: zpuino_empty_device
+  slot13: ishw_slave
   port map (
-    wb_clk_i      => wb_clk_i,
-	 	wb_rst_i      => wb_rst_i,
+    Wb_clk_i      => wb_clk_i,
+    wb_rst_i      => wb_rst_i,
     wb_dat_o      => slot_read(13),
     wb_dat_i      => slot_write(13),
     wb_adr_i      => slot_address(13),
@@ -860,17 +1038,32 @@ begin
     wb_stb_i      => slot_stb(13),
     wb_ack_o      => slot_ack(13),
     wb_inta_o     => slot_interrupt(13),
-    id            => slot_id(13)
+    id            => slot_id(13),
+
+    mi_wb_dat_i   => ishw_wt_m_wb_dat_o,
+    mi_wb_dat_o   => ishw_wt_m_wb_dat_i,
+    mi_wb_adr_o   => ishw_wt_m_wb_adr_i(maxAddrBit downto 0),
+    mi_wb_sel_o   => ishw_wt_m_wb_sel_i,
+    mi_wb_cti_o   => ishw_wt_m_wb_cti_i,
+    mi_wb_we_o    => ishw_wt_m_wb_we_i,
+    mi_wb_cyc_o   => ishw_wt_m_wb_cyc_i,
+    mi_wb_stb_o   => ishw_wt_m_wb_stb_i,
+    mi_wb_ack_i   => ishw_wt_m_wb_ack_o,
+    mi_wb_stall_i => ishw_wt_m_wb_stall_o,
+
+    scki       => ishw_wt_ckis,
+    mosi       => ishw_wt_dati,
+    miso       => ishw_wt_dato
   );
 
   --
   -- IO SLOT 14
   --
 
-  slot14: zpuino_empty_device
+  slot14: ishw_master
   port map (
-    wb_clk_i      => wb_clk_i,
-	 	wb_rst_i      => wb_rst_i,
+    Wb_clk_i      => wb_clk_i,
+    wb_rst_i      => wb_rst_i,
     wb_dat_o      => slot_read(14),
     wb_dat_i      => slot_write(14),
     wb_adr_i      => slot_address(14),
@@ -879,7 +1072,23 @@ begin
     wb_stb_i      => slot_stb(14),
     wb_ack_o      => slot_ack(14),
     wb_inta_o     => slot_interrupt(14),
-    id            => slot_id(14)
+    id            => slot_id(14),
+
+    mi_wb_dat_i   => ishw_nw_m_wb_dat_o,
+    mi_wb_dat_o   => ishw_nw_m_wb_dat_i,
+    mi_wb_adr_o   => ishw_nw_m_wb_adr_i(maxAddrBit downto 0),
+    mi_wb_sel_o   => ishw_nw_m_wb_sel_i,
+    mi_wb_cti_o   => ishw_nw_m_wb_cti_i,
+    mi_wb_we_o    => ishw_nw_m_wb_we_i,
+    mi_wb_cyc_o   => ishw_nw_m_wb_cyc_i,
+    mi_wb_stb_o   => ishw_nw_m_wb_stb_i,
+    mi_wb_ack_i   => ishw_nw_m_wb_ack_o,
+    mi_wb_stall_i => ishw_nw_m_wb_stall_o,
+
+    txclk      => clkdiv,
+    scko       => ishw_nw_ckom,
+    mosi       => ishw_nw_dato,
+    miso       => ishw_nw_dati
   );
 
   --
@@ -887,16 +1096,16 @@ begin
   --
 
   process(gpio_spp_read, spi_pf_mosi, spi_pf_sck,
-          sigmadelta_spp_data,timers_pwm,
+          timers_pwm,
           spi2_mosi,spi2_sck)
   begin
 
     gpio_spp_data <= (others => DontCareValue);
 
     -- PPS Outputs
-    gpio_spp_data(0)  <= sigmadelta_spp_data(0);   -- PPS0 : SIGMADELTA DATA
-    ppsout_info_slot(0) <= 5; -- Slot 5
-    ppsout_info_pin(0) <= 0;  -- PPS OUT pin 0 (Channel 0)
+    -- gpio_spp_data(0)  <= sigmadelta_spp_data(0);   -- PPS0 : SIGMADELTA DATA
+    -- ppsout_info_slot(0) <= 5; -- Slot 5
+    -- ppsout_info_pin(0) <= 0;  -- PPS OUT pin 0 (Channel 0)
 
     gpio_spp_data(1)  <= timers_pwm(0);            -- PPS1 : TIMER0
     ppsout_info_slot(1) <= 3; -- Slot 3
@@ -914,9 +1123,9 @@ begin
     ppsout_info_slot(4) <= 6; -- Slot 6
     ppsout_info_pin(4) <= 1;  -- PPS OUT pin 1 (SCK)
 
-    gpio_spp_data(5)  <= sigmadelta_spp_data(1);   -- PPS5 : SIGMADELTA1 DATA
-    ppsout_info_slot(5) <= 5; -- Slot 5
-    ppsout_info_pin(5) <= 1;  -- PPS OUT pin 0 (Channel 1)
+    -- gpio_spp_data(5)  <= sigmadelta_spp_data(1);   -- PPS5 : SIGMADELTA1 DATA
+    -- ppsout_info_slot(5) <= 5; -- Slot 5
+    -- ppsout_info_pin(5) <= 1;  -- PPS OUT pin 0 (Channel 1)
 
     -- PPS inputs
     spi2_miso         <= gpio_spp_read(0);         -- PPS0 : USPI MISO
@@ -925,40 +1134,119 @@ begin
 
   end process;
 
-  arb: wbarb2_1
+  arb: wbarb8_1
   generic map (
     ADDRESS_HIGH => maxAddrBit,
     ADDRESS_LOW => 0
   )
   port map (
     wb_clk_i      => wb_clk_i,
-	 	wb_rst_i      => wb_rst_i,
+    wb_rst_i      => wb_rst_i,
 
     -- Master 0 signals
 
-    m0_wb_dat_o   => ishw1_m_wb_dat_o,
-    m0_wb_dat_i   => ishw1_m_wb_dat_i,
-    m0_wb_adr_i   => ishw1_m_wb_adr_i,
-    m0_wb_sel_i   => ishw1_m_wb_sel_i,
+    m0_wb_dat_o   => ishw_nt_m_wb_dat_o,
+    m0_wb_dat_i   => ishw_nt_m_wb_dat_i,
+    m0_wb_adr_i   => ishw_nt_m_wb_adr_i,
+    m0_wb_sel_i   => ishw_nt_m_wb_sel_i,
     m0_wb_cti_i   => CTI_CYCLE_CLASSIC,
-    m0_wb_we_i    => ishw1_m_wb_we_i,
-    m0_wb_cyc_i   => ishw1_m_wb_cyc_i,
-    m0_wb_stb_i   => ishw1_m_wb_stb_i,
-    m0_wb_ack_o   => ishw1_m_wb_ack_o,
-    m0_wb_stall_o => ishw1_m_wb_stall_o,
+    m0_wb_we_i    => ishw_nt_m_wb_we_i,
+    m0_wb_cyc_i   => ishw_nt_m_wb_cyc_i,
+    m0_wb_stb_i   => ishw_nt_m_wb_stb_i,
+    m0_wb_ack_o   => ishw_nt_m_wb_ack_o,
+    m0_wb_stall_o => ishw_nt_m_wb_stall_o,
 
     -- Master 1 signals
 
-    m1_wb_dat_o   => ishw2_m_wb_dat_o,
-    m1_wb_dat_i   => ishw2_m_wb_dat_i,
-    m1_wb_adr_i   => ishw2_m_wb_adr_i,
-    m1_wb_sel_i   => ishw2_m_wb_sel_i,
+    m1_wb_dat_o   => ishw_ne_m_wb_dat_o,
+    m1_wb_dat_i   => ishw_ne_m_wb_dat_i,
+    m1_wb_adr_i   => ishw_ne_m_wb_adr_i,
+    m1_wb_sel_i   => ishw_ne_m_wb_sel_i,
     m1_wb_cti_i   => CTI_CYCLE_CLASSIC,
-    m1_wb_we_i    => ishw2_m_wb_we_i,
-    m1_wb_cyc_i   => ishw2_m_wb_cyc_i,
-    m1_wb_stb_i   => ishw2_m_wb_stb_i,
-    m1_wb_ack_o   => ishw2_m_wb_ack_o,
-    m1_wb_stall_o => ishw2_m_wb_stall_o,
+    m1_wb_we_i    => ishw_ne_m_wb_we_i,
+    m1_wb_cyc_i   => ishw_ne_m_wb_cyc_i,
+    m1_wb_stb_i   => ishw_ne_m_wb_stb_i,
+    m1_wb_ack_o   => ishw_ne_m_wb_ack_o,
+    m1_wb_stall_o => ishw_ne_m_wb_stall_o,
+
+    -- Master 2 signals
+
+    m2_wb_dat_o   => ishw_et_m_wb_dat_o,
+    m2_wb_dat_i   => ishw_et_m_wb_dat_i,
+    m2_wb_adr_i   => ishw_et_m_wb_adr_i,
+    m2_wb_sel_i   => ishw_et_m_wb_sel_i,
+    m2_wb_cti_i   => CTI_CYCLE_CLASSIC,
+    m2_wb_we_i    => ishw_et_m_wb_we_i,
+    m2_wb_cyc_i   => ishw_et_m_wb_cyc_i,
+    m2_wb_stb_i   => ishw_et_m_wb_stb_i,
+    m2_wb_ack_o   => ishw_et_m_wb_ack_o,
+    m2_wb_stall_o => ishw_et_m_wb_stall_o,
+
+    -- Master 3 signals
+
+    m3_wb_dat_o   => ishw_se_m_wb_dat_o,
+    m3_wb_dat_i   => ishw_se_m_wb_dat_i,
+    m3_wb_adr_i   => ishw_se_m_wb_adr_i,
+    m3_wb_sel_i   => ishw_se_m_wb_sel_i,
+    m3_wb_cti_i   => CTI_CYCLE_CLASSIC,
+    m3_wb_we_i    => ishw_se_m_wb_we_i,
+    m3_wb_cyc_i   => ishw_se_m_wb_cyc_i,
+    m3_wb_stb_i   => ishw_se_m_wb_stb_i,
+    m3_wb_ack_o   => ishw_se_m_wb_ack_o,
+    m3_wb_stall_o => ishw_se_m_wb_stall_o,
+
+    -- Master 4 signals
+
+    m4_wb_dat_o   => ishw_st_m_wb_dat_o,
+    m4_wb_dat_i   => ishw_st_m_wb_dat_i,
+    m4_wb_adr_i   => ishw_st_m_wb_adr_i,
+    m4_wb_sel_i   => ishw_st_m_wb_sel_i,
+    m4_wb_cti_i   => CTI_CYCLE_CLASSIC,
+    m4_wb_we_i    => ishw_st_m_wb_we_i,
+    m4_wb_cyc_i   => ishw_st_m_wb_cyc_i,
+    m4_wb_stb_i   => ishw_st_m_wb_stb_i,
+    m4_wb_ack_o   => ishw_st_m_wb_ack_o,
+    m4_wb_stall_o => ishw_st_m_wb_stall_o,
+
+    -- Master 5 signals
+
+    m5_wb_dat_o   => ishw_sw_m_wb_dat_o,
+    m5_wb_dat_i   => ishw_sw_m_wb_dat_i,
+    m5_wb_adr_i   => ishw_sw_m_wb_adr_i,
+    m5_wb_sel_i   => ishw_sw_m_wb_sel_i,
+    m5_wb_cti_i   => CTI_CYCLE_CLASSIC,
+    m5_wb_we_i    => ishw_sw_m_wb_we_i,
+    m5_wb_cyc_i   => ishw_sw_m_wb_cyc_i,
+    m5_wb_stb_i   => ishw_sw_m_wb_stb_i,
+    m5_wb_ack_o   => ishw_sw_m_wb_ack_o,
+    m5_wb_stall_o => ishw_sw_m_wb_stall_o,
+
+    -- Master 6 signals
+
+    m6_wb_dat_o   => ishw_wt_m_wb_dat_o,
+    m6_wb_dat_i   => ishw_wt_m_wb_dat_i,
+    m6_wb_adr_i   => ishw_wt_m_wb_adr_i,
+    m6_wb_sel_i   => ishw_wt_m_wb_sel_i,
+    m6_wb_cti_i   => CTI_CYCLE_CLASSIC,
+    m6_wb_we_i    => ishw_wt_m_wb_we_i,
+    m6_wb_cyc_i   => ishw_wt_m_wb_cyc_i,
+    m6_wb_stb_i   => ishw_wt_m_wb_stb_i,
+    m6_wb_ack_o   => ishw_wt_m_wb_ack_o,
+    m6_wb_stall_o => ishw_wt_m_wb_stall_o,
+
+    -- Master 7 signals
+
+    m7_wb_dat_o   => ishw_nw_m_wb_dat_o,
+    m7_wb_dat_i   => ishw_nw_m_wb_dat_i,
+    m7_wb_adr_i   => ishw_nw_m_wb_adr_i,
+    m7_wb_sel_i   => ishw_nw_m_wb_sel_i,
+    m7_wb_cti_i   => CTI_CYCLE_CLASSIC,
+    m7_wb_we_i    => ishw_nw_m_wb_we_i,
+    m7_wb_cyc_i   => ishw_nw_m_wb_cyc_i,
+    m7_wb_stb_i   => ishw_nw_m_wb_stb_i,
+    m7_wb_ack_o   => ishw_nw_m_wb_ack_o,
+    m7_wb_stall_o => ishw_nw_m_wb_stall_o,
+
 
     -- Slave signals
 
