@@ -13,11 +13,11 @@ prom-generic-dp-32.vhd:
 	$(MAKE) -C ../../../bootloader -f Makefile BOARD=$(BOARD) SIZE=$(SIZE) DEFINES=$(DEFINES)
 	cp ../../../bootloader/prom-generic-dp-32.vhd .
 	cp ../../../bootloader/bootloader.vhd .
-	
+
 ${PROJECT}.ngc: prom-generic-dp-32.vhd
 	mkdir -p xst/projnav.tmp/
 	xst -intstyle ise -ifn ${PROJECT}.xst -ofn ${PROJECT}.syr
-        
+
 ${PROJECT}.ngd: ${PROJECT}.ngc
 	ngdbuild -intstyle ise -dd _ngo -nt timestamp \
 	-uc ${PROJECT}.ucf -p ${PART} ${PROJECT}.ngc ${PROJECT}.ngd

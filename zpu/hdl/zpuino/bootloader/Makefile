@@ -30,13 +30,13 @@ all: prom-generic-dp-32.vhd Makefile $(TARGET).S
 $(TARGET).elf: $(OBJ)
 	$(CXX) $+ -o $@ $(LDFLAGS)
 	$(OBJDUMP) -D $@ > $(TARGET).s
-	
+
 $(TARGET).bin: $(TARGET).elf
 	$(OBJCOPY) -O binary $< $@
 
 $(TARGET).hex: $(TARGET).elf
 	$(OBJCOPY) -O ihex $< $@
-	
+
 $(TARGET).S: boot.cpp
 	$(CXX) $(CXXFLAGS) -S $+ -o $@
 
